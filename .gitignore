@@ -1,0 +1,33 @@
+# Keil build outputs
+*.axf
+*.uvgui.*
+*.uvopt
+*.uvproj.user
+*.build_log.htm
+*.lst
+*.map
+*.crf
+*.d
+*.o
+*.dep
+
+# Debug/Output folders
+/Objects/
+/Listings/
+/Debug/
+/Release/
+
+# TivaWare/compiler temp files
+*.cmd
+*.bin
+*.elf
+*.hex
+
+# Keil IDE autosaves
+*.uvgui.*.bak
+*.uvopt.bak
+*.uvproj.bak
+
+# Local settings (user-specific)
+*.uvmpw
+*.ini
