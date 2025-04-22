@@ -410,11 +410,6 @@
               <FileType>2</FileType>
               <FilePath>.\startup_TM4C123.s</FilePath>
             </File>
-            <File>
-              <FileName>tm4c123gh6pm.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\tm4c123gh6pm.h</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>
