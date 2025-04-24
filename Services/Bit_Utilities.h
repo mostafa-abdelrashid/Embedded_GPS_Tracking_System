@@ -1,3 +1,5 @@
+#ifndef Bit_Utilities_H
+#define Bit_Utilities_H
 
 #define SET(reg,value) reg|=value 	// Set (enable) all bits specified in 'value' in the given register 
 
@@ -10,3 +12,5 @@
 #define CLR_BIT(reg,bit) reg&=(~(1<<bit)) //Clear a specific bit in a register (bit position 0-31)
 
 #define TOG_BIT(reg,bit)	reg^=(1<<bit)  // Toggle a specific bit in a register
+
+#endif
