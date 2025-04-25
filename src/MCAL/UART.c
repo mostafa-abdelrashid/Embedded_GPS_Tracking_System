@@ -76,7 +76,8 @@ char UART0_ReceiveChar(){
 
 void UART0_ReceiveString(char* ptr, unsigned int length){  
     char character;
-    for(int i=0;i<length;i++){
+	int i;
+    for( i=0;i<length;i++){
         character = UART0_ReceiveChar();
         if(character != CR){
             ptr[i]=character;
@@ -96,7 +97,8 @@ char UART2_ReceiveChar(){
 
 void UART2_ReceiveString(char* ptr, unsigned int length){  
     char character;
-    for(int i=0;i<length;i++){
+	int i;
+    for( i=0;i<length;i++){
         character = UART2_ReceiveChar();
         if(character != END){
             ptr[i]=character;
@@ -115,7 +117,8 @@ char UART5_ReceiveChar(){
 
 void UART5_ReceiveString(char* ptr, unsigned int length){  //
     char character;
-    for(int i=0;i<length;i++){
+	int i;
+    for( i=0;i<length;i++){
         character = UART5_ReceiveChar();
         if(character != END){
             ptr[i]=character;
