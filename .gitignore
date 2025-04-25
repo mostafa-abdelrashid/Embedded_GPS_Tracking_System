@@ -23,10 +23,11 @@
 *.elf
 *.hex
 
-# Keil IDE autosaves
-*.uvgui.*.bak
+# Keil IDE autosaves and backups
 *.uvopt.bak
 *.uvproj.bak
+*.uvgui_*.bak
+*.uvgui.*.bak
 
 # Local settings (user-specific)
 *.uvmpw

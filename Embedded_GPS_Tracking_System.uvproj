@@ -411,9 +411,24 @@
               <FilePath>.\startup_TM4C123.s</FilePath>
             </File>
             <File>
+              <FileName>Bit_Utilities.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Services\Bit_Utilities.h</FilePath>
+            </File>
+            <File>
+              <FileName>UART.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\MCAL\UART.c</FilePath>
+            </File>
+            <File>
+              <FileName>UART.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Headers\MCAL\UART.h</FilePath>
+            </File>
+            <File>
               <FileName>tm4c123gh6pm.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\tm4c123gh6pm.h</FilePath>
+              <FilePath>.\Services\tm4c123gh6pm.h</FilePath>
             </File>
           </Files>
         </Group>
