@@ -30,8 +30,9 @@ int EEPROM_Start(void){
 							/////****eeprom error handling****/////
 int eeprom_error_recovery(void) // NEEDS MORE INVESTIGATION
 {
-	EEPROM_EESUPP_R = EEPROM_EESUPP_START; // start erase
-	 unsigned int  timeout = 100000;
+		unsigned int  timeout = 100000;
+
+	 EEPROM_EESUPP_R = EEPROM_EESUPP_START; // start erase
 	 while((EEPROM_EEDONE_R & EEPROM_EEDONE_WORKING) && timeout--)
         ; // Wait until working bit clears or timeout happens
 
