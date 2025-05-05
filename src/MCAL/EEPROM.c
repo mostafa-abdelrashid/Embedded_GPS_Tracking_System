@@ -1,6 +1,8 @@
 #include  "../../Services/Bit_Utilities.h"
 #include  "../../Services/tm4c123gh6pm.h"
 #include  "../../Headers/MCAL/Systick.h"
+#include  "../../Headers/MCAL/EEPROM.h"
+
 
 
 
@@ -61,6 +63,8 @@ return flag;
 							/////****eeprom write****/////
 void eeprom_write(float data,unsigned int addr) // ???? uinnt8_t mkan kol u8 ?????   //data ->32-bit
 {
+	  if (addr + 4 > EEPROM_SIZE) return; // prevent overflow
+
 	while(EEPROM_EEDONE_R & EEPROM_EEDONE_WORKING); //	checking not busy
 	EEPROM_EEBLOCK_R = (addr&0x1F0);								// passing the block address only and zeroing anything else
 	EEPROM_EEBLOCK_R = addr >>4;										//	shifting for keeping in the same block number
@@ -71,6 +75,8 @@ void eeprom_write(float data,unsigned int addr) // ???? uinnt8_t mkan kol u8 ???
 							/////****eeprom read****/////
 float eeprom_read(unsigned int addr) // hl el data htb2a saved mn mara l mara ??
 {
+	if (addr + 4 > EEPROM_SIZE) return 0; // prevent overflow
+	
 	while(EEPROM_EEDONE_R & EEPROM_EEDONE_WORKING);
 	EEPROM_EEBLOCK_R = (addr&0x1F0);								// passing the block address only and zeroing anything else
 	EEPROM_EEBLOCK_R = addr >>4;//Block number

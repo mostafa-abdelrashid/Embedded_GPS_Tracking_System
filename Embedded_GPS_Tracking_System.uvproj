@@ -480,6 +480,16 @@
               <FileType>1</FileType>
               <FilePath>.\src\HAL\GPS.c</FilePath>
             </File>
+            <File>
+              <FileName>Landmarks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\Landmarks.c</FilePath>
+            </File>
+            <File>
+              <FileName>Landmarks.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Headers\HAL\Landmarks.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
