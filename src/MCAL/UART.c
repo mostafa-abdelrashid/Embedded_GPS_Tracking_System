@@ -6,9 +6,9 @@
 
 // UART0_initialization
 void UART0_Init(void){
-    SET(SYSCTL_RCGCUART_R,UART0); // activate UART0 clock
+    SET_BIT(SYSCTL_RCGCUART_R,UART0); // activate UART0 clock
     while(GET_BIT(SYSCTL_PRUART_R,UART0)==0); // wait for activation
-    SET(SYSCTL_RCGCGPIO_R,UART_PORTA);  // activate PORTA GPIO clock
+    SET_BIT(SYSCTL_RCGCGPIO_R,UART_PORTA);  // activate PORTA GPIO clock
     while(GET_BIT(SYSCTL_PRGPIO_R,UART_PORTA)==0);
     CLR_BIT(UART0_CTL_R,0); // disable UART0
     UART0_IBRD_R=0x68;      // 104 for 9600 baud @16MHz

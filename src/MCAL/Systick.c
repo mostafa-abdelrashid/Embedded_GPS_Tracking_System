@@ -11,7 +11,8 @@ void Systick_Wait(unsigned int delay){
     NVIC_ST_CTRL_R = 0;
     NVIC_ST_RELOAD_R = delay-1;
     NVIC_ST_CURRENT_R = 0;
-    NVIC_ST_CTRL_R=0x00000005;  
+    NVIC_ST_CTRL_R=0x00000005; 
+		while(GET_BIT(NVIC_ST_CTRL_R,16)==0);
 }
 void delay (unsigned int delay){
 		unsigned int i ;
