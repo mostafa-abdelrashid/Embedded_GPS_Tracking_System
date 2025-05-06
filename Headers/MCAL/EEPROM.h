@@ -7,7 +7,7 @@
 #define EEPROM_SIZE           1024    // EEPROM size in bytes (adjust according to your device)
 
 
-extern void EEPROM_Init(void);
+extern int EEPROM_Init(void);
 extern void eeprom_write(float data,unsigned int addr);
 extern float eeprom_read(unsigned int addr);
 

@@ -1,9 +1,7 @@
 #ifdef GPS_H
 #define GPS_H
 
-/// defining constants 
-#define PI 3.14159265359
-#define EARTH_RADIUS 637100
+
 
 
 
