@@ -1,8 +1,8 @@
 
-#include"../../Headers/Mcal/UART.h"
-#include<stdio.h>
-#include"../../Services/tm4c123gh6pm.h"
-#include"../../Services/Bit_Utilities.h"
+#include "../../Headers/Mcal/UART.h"
+#include <stdio.h>
+#include "../../Services/tm4c123gh6pm.h"
+#include "../../Services/Bit_Utilities.h"
 
 // UART0_initialization
 void UART0_Init(void){

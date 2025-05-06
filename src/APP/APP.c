@@ -1,7 +1,7 @@
 #include "../../Headers/HAL/GPS.h"
 #include "../../Headers/APP/APP.h"
 #include "../../Services/Bit_Utilities.h"
-#include<math.h>
+#include <math.h>
 
 
 float ToDegree(float angle) {
