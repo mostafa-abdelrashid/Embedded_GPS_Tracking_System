@@ -56,7 +56,7 @@ int EEPROM_Init(void) // if init fails should we reinit or not ????
 	if(flag)
 		; // no errors initialzation was successful
 	else
-		eeprom_error_recovery(); // error
+		flag = eeprom_error_recovery(); // error
 
 return flag;
 }
