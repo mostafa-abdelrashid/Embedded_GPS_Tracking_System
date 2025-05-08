@@ -29,7 +29,7 @@ void LCD_string(unsigned char *str,unsigned char len);
 //B1 == PA6
 //B2 == PA5
 //B3 == PB4
-//B4 == PF1
+//B4 == PB5
 //B5 == PD3
 //B6 == PB1
 //B7 == PB0
@@ -39,15 +39,15 @@ void initLCD (void){
 	GPIO_PORTA_DIR_R |= 0xE0;
 	GPIO_PORTA_DEN_R |= 0xE0;
 	GPIO_PORTA_CR_R  |= 0xE0;
-	initPortB(); //B4-B1-B0
-	GPIO_PORTB_DIR_R |= 0x13;
+	initPortB(); //B4-B1-B0-B5
+	GPIO_PORTB_DIR_R |= 0xFF;
 	//the rest already intialized in GPIO.c In PORTB
 	initPortD(); //D3 //D0-D1-D2 ForRS-RN-EN
 	GPIO_PORTD_DIR_R |= 0xF;
 	GPIO_PORTD_DEN_R |= 0xF;
 	GPIO_PORTD_CR_R  |= 0xF;
-	initPortF(); //F1
-	GPIO_PORTD_DIR_R |= 0x2;
+	/*initPortF(); //F1
+	GPIO_PORTF_DIR_R |= 0x2;*/
 	// staring commands for LCD
 	LCD_cmd(0x38); //8-bit mode utilsing 16 columons and 2 rows (upper row 0x80 :0x8F)(lower row 0xC0 :0xCF)
 	LCD_cmd(0x06); // auto increment 
@@ -72,9 +72,9 @@ void printdata(unsigned char data) //data = 8-bit hexadecimal data
 	//third bit(B3) = B4
 	if((data&0x08) !=0) {GPIO_PORTB_DATA_R |= (1<<4);}
 	else								{GPIO_PORTB_DATA_R &= (~(1<<4));}
-	//forth bit(B4) = F1
-	if((data&0x10) !=0) {GPIO_PORTF_DATA_R |= (1<<1);}
-	else								{GPIO_PORTF_DATA_R &= (~(1<<1));}
+	//forth bit(B4) = B5
+	if((data&0x10) !=0) {GPIO_PORTB_DATA_R |= (1<<5);}
+	else								{GPIO_PORTB_DATA_R &= (~(1<<5));}
 	//fifth bit(B5) =D3
 	if((data&0x20) !=0) {GPIO_PORTD_DATA_R |= (1<<3);}
 	else								{GPIO_PORTD_DATA_R &= (~(1<<3));}
