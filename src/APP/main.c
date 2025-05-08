@@ -11,8 +11,20 @@
 #include "../../Test/Systick_test.c"
 #include "../../Services/Bit_Utilities.h"
 #include "../../Headers/HAL/LCD.h"
+#include "../../Headers/HAL/GPS.h"
 #include<stdint.h>
+#include<string.h>
 
+
+
+
+int main(void) {
+    initPortF();                   // Initialize LEDs
+    UART0_Init(); 
+
+	UART0_SendChar('K');
+
+}
 
 
 /*void PortF_Init(void){
@@ -31,6 +43,38 @@ int main(void){
         delay(500);                           // Delay 500 ms (assumes 16 MHz clock)
     }
 }*/
+/*int main(){
+	/*
+				char x='a';
+			UART0_Init();
+		
+			UART0_SendChar(x);
+	
+			LCD_Init();
+		LCD_Clear();
+LCD_WriteData(' ');              // Write the leading space
+LCD_String("Kandeel 3mak"); 
+	*/
+/*	UART2_Init();
+	LCD_Init();
+	LCD_Clear();
+	LCD_WriteData(' ');
+	while(1){
+		LCD_WriteData(UART2_ReceiveChar());
+	}
+		
+
+}*/
+
+
+
+
+
+
+
+
+
+
     // Initialize system components
    /* Systick_Init();       // Required for delay functions
     UART0_Init();         // For debug output
@@ -89,7 +133,105 @@ int main(void) {
     }
 }*/
 ////////////////////////    TEST 3 for testing uart      ////////////////////
-#define RED_LED 1
+
+
+
+
+/*
+int main(){
+	 initLCD();
+		LCD_data('a');
+    while (1);       
+
+}*/
+
+	/*
+void initPortF(void);
+void delay(unsigned int ms);
+
+int main(void) {
+	/*
+    // Enable UART0 and GPIOA
+    SYSCTL_RCGCUART_R |= 0x01;     // UART0
+    SYSCTL_RCGCGPIO_R |= 0x01;     // GPIOA
+
+    while ((SYSCTL_PRUART_R & 0x01) == 0);  // Wait for UART0 ready
+    while ((SYSCTL_PRGPIO_R & 0x01) == 0);  // Wait for GPIOA ready
+
+    // Disable UART0 before config
+    UART0_CTL_R &= ~UART_CTL_UARTEN;
+
+    // Baud rate calculation for 80 MHz and 9600 baud
+    UART0_IBRD_R = 104;    // Integer part
+    UART0_FBRD_R = 11;     // Fractional part
+
+    UART0_LCRH_R = UART_LCRH_WLEN_8 | UART_LCRH_FEN; // 8-bit, FIFO
+    UART0_CTL_R = UART_CTL_UARTEN | UART_CTL_TXE | UART_CTL_RXE;
+
+    // Configure PA0, PA1 for UART
+    GPIO_PORTA_AFSEL_R |= 0x03;           // Alt func PA0, PA1
+    GPIO_PORTA_PCTL_R &= ~0xFF;           // Clear PCTL
+    GPIO_PORTA_PCTL_R |= 0x11;            // Set UART0 on PA0, PA1
+    GPIO_PORTA_DEN_R |= 0x03;             // Enable digital on PA0, PA1
+
+    // Wait for UART to be ready to transmit
+    while (UART0_FR_R & UART_FR_TXFF);    // Wait if FIFO is full
+
+    UART0_DR_R = 'A';   // Send character 'A'
+
+    while (1); // Infinite loop to halt after sending
+}
+
+    // 1. Initialize LEDs first for visual feedback
+    initPortF();
+    GPIO_PORTF_DATA_R = 0x0E; // Turn on all LEDs (RED|BLUE|GREEN)
+    delay(1000);
+    GPIO_PORTF_DATA_R = 0x00; // All off - shows init completed
+    
+    // 2. Initialize SysTick
+    Systick_Init();
+    GPIO_PORTF_DATA_R = 0x02; // Red ON (Systick init start)
+    delay(100);
+    GPIO_PORTF_DATA_R = 0x00; // All off
+    
+    // 3. Initialize UART with LED debug
+    GPIO_PORTF_DATA_R = 0x04; // Blue ON (UART init start)
+    UART0_Init();
+    delay(100);
+    GPIO_PORTF_DATA_R = 0x08; // Green ON (UART init success)
+    delay(300);
+    GPIO_PORTF_DATA_R = 0x00;
+    
+    // 4. Test transmission with full LED debug
+    while(1) {
+        // Pre-transmission check
+        GPIO_PORTF_DATA_R = 0x02; // Red ON
+        delay(50);
+        
+        // Verify UART is ready
+        if(UART0_FR_R & 0x20) { // If TX FIFO full
+            GPIO_PORTF_DATA_R = 0x0A; // Red+Green (error state)
+            delay(1000);
+            continue;
+        }
+        
+        // Send character
+        UART0_DR_R = 'A';
+        
+        // Post-transmission verification
+        GPIO_PORTF_DATA_R = 0x08; // Green ON
+        delay(50);
+        
+        // Check for transmission completion
+        while(UART0_FR_R & 0x20); // Wait until not busy
+        GPIO_PORTF_DATA_R = 0x00;
+        delay(500);
+    }
+		
+
+
+
+/*#define RED_LED 1
 #define BLUE_LED 2
 #define GREEN_LED 3
 int main(void) {
@@ -101,12 +243,13 @@ int main(void) {
 		delay(10000);
     UART0_Init(); // Connects to PC
 	  TOG_BIT(GPIO_PORTF_DATA_R, BLUE_LED);
-	
-     UART0_SendChar('c');	
-    //UART0_SendString("UART0 test: Enter text\r\n");
+
+     UART0_SendChar('B');	
+    UART0_SendString("UART0 test: Enter text\r\n");
 	
 
     }
+*/
 
 ////////////////////////    TEST 2 for testing eeprom   ////////////////////
 /*

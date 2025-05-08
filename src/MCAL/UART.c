@@ -1,51 +1,166 @@
 
+
 #include "../../Headers/Mcal/UART.h"
 #include <stdio.h>
 #include "../../Services/tm4c123gh6pm.h"
 #include "../../Services/Bit_Utilities.h"
+#include "../../Headers/Mcal/GPIO.h"
 
+void UART0_Init(void) {
+    // 1. Enable clocks
+    SYSCTL_RCGCUART_R |= 0x01;
+    SYSCTL_RCGCGPIO_R |= 0x01;
+    
+    // Wait for peripheral readiness
+    while((SYSCTL_PRUART_R & 0x01) == 0);
+    while((SYSCTL_PRGPIO_R & 0x01) == 0);
 
-
-void UART0_Init(void){
-	
-	SYSCTL_RCGCUART_R |= 0x01;
-	SYSCTL_RCGCGPIO_R |= 0x01;
-	while ((SYSCTL_PRUART_R & 0x01) == 0) {};
-	while ((SYSCTL_PRGPIO_R & 0x01) == 0) {};
-	UART0_CTL_R = ~0x01; // Clear UARTEN bit (bit 0)
-	UART0_IBRD_R = 104; // Integer part
-  UART0_FBRD_R = 11; // Fractional part (0.1667 × 64 + 0.5 ˜ 11)
-	UART0_LCRH_R = 0x70; // 8-bit word length (WLEN=11), enable FIFO (FEN=1)
-	// 6. Enable UART, TX, and RX
-	UART0_CTL_R = 0x301; // Enable UARTEN (bit 0), TXE (bit 8), RXE (bit 9)
-	// 7. Configure GPIO pins for UART
-	GPIO_PORTA_AFSEL_R |= 0x03; // Enable alt function on PA0, PA1
-	GPIO_PORTA_PCTL_R |= 0x00000011; // Configure PA0 and PA1 for UART
-	GPIO_PORTA_DEN_R |= 0x03; // Digital enable on PA0, PA1
-	GPIO_PORTA_AMSEL_R &= ~0x03; // Disable analog on PA0, PA1
-    /*SET_BIT(SYSCTL_RCGCUART_R, UART0);          // Enable UART0 clock
-    while(GET_BIT(SYSCTL_PRUART_R, UART0) == 0);
-
-    SET_BIT(SYSCTL_RCGCGPIO_R, UART_PORTA);     // Enable GPIOA clock
-    while(GET_BIT(SYSCTL_PRGPIO_R, UART_PORTA) == 0);
-
-    CLR_BIT(UART0_CTL_R, 0);                    // Disable UART0
-
-    UART0_IBRD_R = 0x68;                        // Integer part: 104
-    UART0_FBRD_R = 0x0B;                        // Fractional: 11
-		//UART0_FBRD_R =34;
-		//UART0_IBRD_R =325;
-	  UART0_CC_R = 0x0;                           // Use system clock (16 MHz)
-    UART0_LCRH_R = 0x70;                        // 8-bit, no parity, 1 stop
-
-    // GPIO config
-    SET(GPIO_PORTA_AFSEL_R, UART0_PINS);        // Enable alt func PA0, PA1
-    GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R & 0xFFFFFF00) | 0x00000011;
-    SET(GPIO_PORTA_DEN_R, UART0_PINS);          // Digital enable
-    CLR(GPIO_PORTA_AMSEL_R, UART0_PINS);        // Disable analog
-
-    UART0_CTL_R = 0x301; */                       // Enable UART0, TXE, RXE
+    // 2. Disable UART during config
+    UART0_CTL_R &= ~0x01;
+    
+    // 3. Baud rate 115200 (16MHz clock)
+    UART0_IBRD_R = 104;
+    UART0_FBRD_R = 11;
+    
+    // 4. 8-bit, FIFO enabled
+    UART0_LCRH_R = 0x70;
+    
+    // 5. GPIO configuration
+    GPIO_PORTA_AFSEL_R |= 0x03;
+    GPIO_PORTA_PCTL_R |= 0x00000011;
+    GPIO_PORTA_DEN_R |= 0x03;
+    
+    // 6. Enable UART
+    UART0_CTL_R |= 0x301;
+		
 }
+
+void UART0_SendChar(char data) {
+    while(UART0_FR_R & 0x20);        // Wait until TX FIFO not full
+    UART0_DR_R = data;
+}
+
+void UART0_SendString(char *pt) {
+    while(*pt) {
+        UART0_SendChar(*pt);
+        pt++;
+    }
+}
+
+char UART0_ReceiveChar() {
+    while(UART0_FR_R & 0x10);
+    return (char)UART0_DR_R;
+}
+
+void UART0_ReceiveString(char *command, uint32_t length) {
+    char character;
+    uint32_t i;
+    
+    for(i = 0; i < length; i++) {
+        character = UART0_ReceiveChar();
+        if(character != 0x0D) {  // Carriage return check
+            command[i] = character;
+            UART0_SendChar(command[i]);
+        }
+        else break;
+    }
+}
+
+
+
+// Initialize UART2 for GPS on Port D (PD6=RX, PD7=TX)
+void UART2_Init (void){
+	SYSCTL_RCGCUART_R |= 0x0004; 	//activate UARTD
+	while((SYSCTL_PRUART_R & 0x0004) == 0);
+	SYSCTL_RCGCGPIO_R |= 0x0008;  //activate portD clk
+	while((SYSCTL_PRGPIO_R & 0x08) == 0);
+	UART2_CTL_R &= ~0x0001;				//disable UART
+	UART2_IBRD_R = 0x208;					//IBRD = int(80000000/(16*9600)) = int(520.8333)
+	UART2_FBRD_R = 0x35;					//FBRD = int (0.833*64 + 0.5)
+	UART2_CC_R =0;
+	UART2_LCRH_R = 0x070;					//8-bits Data + enable FIFO
+	UART2_CTL_R = 0x0301;					//activate RXE, TXE & UART
+	GPIO_PORTD_AFSEL_R |= 0xC0; 	//enable alternate function PD6 & PD7
+	GPIO_PORTD_PCTL_R = (GPIO_PORTD_PCTL_R & 0x00FFFFFF) + 0x11000000;
+	GPIO_PORTD_DEN_R |= 0XC0;			//enable digtal I/O 
+	GPIO_PORTD_AMSEL_R &= ~0XC0;	//disable analog I/O
+	
+	
+}
+
+void UART2_SendChar(char data) {
+    while(UART2_FR_R & 0x20);        // Wait until TX FIFO not full
+    UART2_DR_R = data;
+    while(UART2_FR_R & 0x20);        // Wait until transmission complete
+}
+
+void UART2_SendString(char *pt) {
+    while(*pt) {
+        UART2_SendChar(*pt++);
+    }
+}
+
+char UART2_ReceiveChar() {
+    while(UART2_FR_R & 0x10);        // Wait until data available
+    return (char)(UART2_DR_R & 0xFF); // Return 8-bit data
+}
+
+void UART2_ReceiveString(char *buffer, uint32_t max_len) {
+    uint32_t i = 0;
+    char c;
+    
+    while(i < max_len-1) {
+        c = UART2_ReceiveChar();
+        if(c == '\r' || c == '\n') break;
+        buffer[i++] = c;
+    }
+    buffer[i] = '\0'; // Null-terminate
+}
+
+/*
+#include "../../Headers/Mcal/UART.h"
+#include <stdio.h>
+#include "../../Services/tm4c123gh6pm.h"
+#include "../../Services/Bit_Utilities.h"
+#include "../../Headers/Mcal/GPIO.h"
+void UART0_Init (void){
+	/*SYSCTL_RCGCUART_R |= 0x0001; 	//activate UART0
+	while((SYSCTL_PRUART_R & 0x00000001) == 0);
+	SYSCTL_RCGCGPIO_R |= 0x0001;  //activate portA clk
+	while((SYSCTL_PRGPIO_R & 0x01) == 0);
+	UART0_CTL_R &= ~0x0001;				//disable UART
+	UART0_IBRD_R = 0x68;
+	UART0_FBRD_R = 0xB;
+	UART0_LCRH_R = 0x070;					//8-bits Data + enable FIFO
+	UART0_CTL_R = 0x0301;					//activate RXE, TXE & UART
+	GPIO_PORTA_AFSEL_R |= 0x03; 	//enable alternate function PA0 & PA1
+	GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R & 0xFFFFFF00) + 0x00000011;
+	GPIO_PORTA_DEN_R |= 0x03;			//enable digtal I/O 
+	GPIO_PORTA_AMSEL_R &= ~0x03;	//disable analog I/O
+
+	*/
+ /*SYSCTL_RCGCGPIO_R |= 0x01;       // Enable clock for Port A
+    while((SYSCTL_PRGPIO_R & 0x01) == 0) {};  // Wait for clock to be ready
+
+    SYSCTL_RCGCUART_R |= 0x01;       // Enable clock for UART0
+    while((SYSCTL_PRUART_R & 0x01) == 0) {};  // Wait for clock to be ready
+
+    GPIO_PORTA_LOCK_R = 0x4C4F434B;  // Unlock Port A
+    GPIO_PORTA_CR_R = 0x03;          // Commit changes to PA0-PA1
+
+    GPIO_PORTA_DEN_R = 0x03;         // Enable digital function for PA0-PA1
+    GPIO_PORTA_DIR_R &= ~0x03;       // Set PA0-PA1 as input/output as required by UART
+
+    GPIO_PORTA_AMSEL_R = 0x00;       // Disable analog function
+    GPIO_PORTA_PCTL_R = 0x00000011;  // Set PCTL for PA0-PA1 as UART (U0RX, U0TX)
+    GPIO_PORTA_AFSEL_R |= 0x03;      // Enable alternate function for PA0-PA1 (UART)
+
+    UART0_CTL_R = 0;                 // Disable UART0 for configuration
+    UART0_IBRD_R = 104;              // Integer part of baud rate divisor (9600 baud with 16 MHz clock)
+    UART0_FBRD_R = 11;               // Fractional part of baud rate divisor
+    UART0_LCRH_R = 0x70;             // 8-bit, no parity, 1 stop bit, FIFOs enabled
+    UART0_CTL_R = 0x301;  }
+
 
 // UART2_initialization 
 void UART2_Init(void){
@@ -82,20 +197,38 @@ void UART5_Init(void){
 }
 
 // UART0 send char and string functions
-void UART0_SendChar(char data){
-    while(GET_BIT(UART0_FR_R,5)); // Wait while TX FIFO full
-    UART0_DR_R=data;
+
+ 
+void UART0_SendString(char *str){
+    while(*str != '\0'){ // Loop until null terminator is reached
+        UART0_SendChar(*str); // Send each character
+        str++; // Move to the next character
+    }
 }
 
+void UART0_SendChar(char data){
+    while(UART0_isTxReady() == 0); // Wait for transmit FIFO to be not full
+    UART0_DR_R = data; // Send character to UART0 data register
+}
+
+int  UART0_isTxReady(void){
+    return (UART0_FR_R & 0x20) == 0; // Check if TXFF is 0 (transmit FIFO not full)
+}
+
+/*void UART0_SendChar(char data){
+    while(GET_BIT(UART0_FR_R,5)); // Wait while TX FIFO full
+    UART0_DR_R=data;
+}*/
+/*
 void UART0_SendString(char* str){
     while(*str){
         UART0_SendChar(*str);
         str++;
     }
-}
+}*/
 
 // UART0 receive string and char functions (for debugging through PC terminal)
-char UART0_ReceiveChar(){ 
+/*char UART0_ReceiveChar(){ 
     while(GET_BIT(UART0_FR_R,4)); // Wait while RX FIFO empty
     return (char)UART0_DR_R;
 }
@@ -168,4 +301,4 @@ void UART5_SendString(char* ptr){
         ptr++;
     }
 }
-
+*/
