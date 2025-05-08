@@ -102,6 +102,7 @@ void LCD_data(unsigned char data)
 	delay(500);                       //500 is not calculated
 	GPIO_PORTD_DATA_R &= (~(1<<2));	//Turn off enable of LCD 
 	delay(2000);
+	
 }
 void LCD_cmd(unsigned char cmd)
 {
