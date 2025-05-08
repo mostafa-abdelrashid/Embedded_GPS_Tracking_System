@@ -46,13 +46,20 @@ void initLCD (void){
 	GPIO_PORTD_DIR_R |= 0xF;
 	GPIO_PORTD_DEN_R |= 0xF;
 	GPIO_PORTD_CR_R  |= 0xF;
+	delay(600);
 	/*initPortF(); //F1
 	GPIO_PORTF_DIR_R |= 0x2;*/
 	// staring commands for LCD
-	LCD_cmd(0x38); //8-bit mode utilsing 16 columons and 2 rows (upper row 0x80 :0x8F)(lower row 0xC0 :0xCF)
-	LCD_cmd(0x06); // auto increment 
+	LCD_cmd(0x38);	//8-bit mode utilsing 16 columons and 2 rows (upper row 0x80 :0x8F)(lower row 0xC0 :0xCF)
+	delay(1000);
+	LCD_cmd(0x38);
+	delay(2000);
+	LCD_cmd(0x38);
+	delay(500); //three time to ensure Intilziation 
 	LCD_cmd(0x0C); //cursor off  and display on 
-	LCD_cmd(0x01); //clearscreen 
+	LCD_cmd(0x01); //clearscreen
+	delay(5000);
+	LCD_cmd(0x06); // auto increment 	
 	LCD_cmd(0x80);
 }
 
@@ -61,7 +68,7 @@ void initLCD (void){
 void printdata(unsigned char data) //data = 8-bit hexadecimal data
 {
 	//zero bit(B0) = A7
-	if((data&0x01) !=0 ) { GPIO_PORTA_DATA_R |= (1<<7);}
+	if((data&0x01) !=0)  {GPIO_PORTA_DATA_R |= (1<<7);}
 	else								 {GPIO_PORTA_DATA_R &= (~(1<<7));}
 	//first bit(B1) =A6
 	if((data&0x02) !=0) {GPIO_PORTA_DATA_R |= (1<<6);}
@@ -93,7 +100,8 @@ void LCD_data(unsigned char data)
 	GPIO_PORTD_DATA_R |= (1<<0);      // Turn on the RS to Write on data Register for LCD (off for Command REG.)
 	GPIO_PORTD_DATA_R |= (1<<2);      //Turn on enable 
 	delay(500);                       //500 is not calculated
-	GPIO_PORTD_DATA_R &= (~(1<<2));   //Turn off enable of LCD 
+	GPIO_PORTD_DATA_R &= (~(1<<2));	//Turn off enable of LCD 
+	delay(2000);
 }
 void LCD_cmd(unsigned char cmd)
 {
@@ -103,6 +111,7 @@ void LCD_cmd(unsigned char cmd)
 	GPIO_PORTD_DATA_R |= (1<<2);      //Turn on enable 
 	delay(500);                       //500 is not calculated
 	GPIO_PORTD_DATA_R &= (~(1<<2));   //Turn off enable of LCD 
+	delay(2000);
 }
 
 void LCD_string(unsigned char *str,unsigned char len)
