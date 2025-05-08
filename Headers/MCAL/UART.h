@@ -1,4 +1,22 @@
+#ifndef UART_H
+#define UART_H
+#include "tm4c123gh6pm.h"
+#include <stdint.h>
 
+
+void UART0_Init(void);
+void UART0_SendChar(char data);
+void UART0_SendString(char *pt);
+char UART0_ReceiveChar(void);
+void UART0_ReceiveString(char *command, uint32_t length);
+void UART2_Init(void);
+void UART2_SendChar(char data);
+void UART2_SendString(char *pt);
+char UART2_ReceiveChar(void);
+void UART2_ReceiveString(char *command, uint32_t length);
+
+#endif // UART_H
+/*
 #ifndef UART_H
 #define UART_H
 
@@ -7,6 +25,7 @@ extern void UART0_SendChar(char data );
 extern void UART0_SendString(char *str);
 extern char UART0_ReceiveChar(void);
 extern void UART0_ReceiveString(char* cmd, unsigned int length);
+extern int UART0_isTxReady(void);
 
 extern void UART2_SendChar(char data );
 extern void UART2_SendString(char *str);
@@ -57,4 +76,4 @@ extern void UART5_Init(void);
 #define END 0x2A			// "*" 
 
 
-#endif // UART_H
+#endif // UART_H*/
