@@ -6,6 +6,8 @@
 extern void initPortA(void);
 extern void initPortB(void);
 extern void initPortD(void);
+extern void initPortE(void);
+
 extern void initPortF(void);
 
 #endif

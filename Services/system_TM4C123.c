@@ -571,16 +571,17 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
  * @brief  Setup the microcontroller system.
  *         Initialize the System.
  */
+
 void SystemInit (void)
 {
 #if(CLOCK_SETUP)
     uint32_t i;
 #endif
 
-  /* FPU settings ------------------------------------------------------------*/
+  
   #if (__FPU_USED == 1)
     SCB->CPACR |= ((3UL << 10*2) |                 /* set CP10 Full Access */
-                   (3UL << 11*2)  );               /* set CP11 Full Access */
+                 (3UL << 11*2)  );               /* set CP11 Full Access */
   #endif
 
 #if(CLOCK_SETUP)
@@ -595,7 +596,7 @@ void SystemInit (void)
     SYSCTL->RCC2 = (RCC2_Val | (1UL<<11));                          /* set value with BYPASS */
     for (i = 0; i < 1000; i++);   /* wait a while */
 
-    SYSCTL->RCC  = (RCC_Val  | (1<<11));                            /* set value with BYPASS */
+   SYSCTL->RCC  = (RCC_Val  | (1<<11));                            /* set value with BYPASS */
 
     if ( (((RCC_Val  & (1UL<<13)) == 0) && ((RCC2_Val & (1UL<<31)) == 0)) ||
          (((RCC2_Val & (1UL<<13)) == 0) && ((RCC2_Val & (1UL<<31)) != 0))   ) {

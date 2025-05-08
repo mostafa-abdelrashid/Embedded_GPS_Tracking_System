@@ -4,7 +4,6 @@
 #include "../../Headers/MCAL/Systick.h"
 #include "../../Headers/MCAL/GPIO.h"
 #include "../../Headers/MCAL/EEPROM.h"
-#include "../../Headers/HAL/GPS.h"
 #include "../../Headers/HAL/Landmarks.h"
 #include "../../Headers/APP/APP.h"
 #include "../../Headers/HAL/GPS.h"
@@ -47,8 +46,9 @@ void initLCD (void){
 	GPIO_PORTD_DEN_R |= 0xF;
 	GPIO_PORTD_CR_R  |= 0xF;
 	delay(600);
-	/*initPortF(); //F1
-	GPIO_PORTF_DIR_R |= 0x2;*/
+	initPortF(); //F1
+	GPIO_PORTF_DIR_R |= 0x2;
+
 	// staring commands for LCD
 	LCD_cmd(0x38);	//8-bit mode utilsing 16 columons and 2 rows (upper row 0x80 :0x8F)(lower row 0xC0 :0xCF)
 	delay(1000);
@@ -102,7 +102,7 @@ void LCD_data(unsigned char data)
 	delay(500);                       //500 is not calculated
 	GPIO_PORTD_DATA_R &= (~(1<<2));	//Turn off enable of LCD 
 	delay(2000);
-	
+
 }
 void LCD_cmd(unsigned char cmd)
 {
@@ -110,7 +110,7 @@ void LCD_cmd(unsigned char cmd)
 	GPIO_PORTD_DATA_R &= (~(1<<1));   //turnoff RN to R/W bin on Write 
 	GPIO_PORTD_DATA_R &= (~(1<<0));   // Turn offthe RS to Write on Command Register for LCD (on for Data REG.)
 	GPIO_PORTD_DATA_R |= (1<<2);      //Turn on enable 
-	delay(500);                       //500 is not calculated
+	delay(1);                       //500 is not calculated
 	GPIO_PORTD_DATA_R &= (~(1<<2));   //Turn off enable of LCD 
 	delay(2000);
 }
@@ -122,3 +122,77 @@ void LCD_string(unsigned char *str,unsigned char len)
 		LCD_data(str[i]);
 	}
 }
+/*#include "../../Services/tm4c123gh6pm.h"
+#include "../../Services/Bit_Utilities.h"
+#include "../../Headers/MCAL/GPIO.h"
+#include "../../Headers/MCAL/Systick.h"
+#include "../../Headers/HAL/LCD.h"
+
+void initLCD(void) {
+    initPortA();
+    GPIO_PORTA_DIR_R |= 0xE0;
+    GPIO_PORTA_DEN_R |= 0xE0;
+    GPIO_PORTA_CR_R  |= 0xE0;
+
+    initPortB();
+    GPIO_PORTB_DIR_R |= 0x13;
+    GPIO_PORTB_DEN_R |= 0x13;
+    GPIO_PORTB_CR_R  |= 0x13;
+
+    initPortD();
+    GPIO_PORTD_DIR_R |= 0x0F;
+    GPIO_PORTD_DEN_R |= 0x0F;
+    GPIO_PORTD_CR_R  |= 0x0F;
+
+    initPortF();
+    GPIO_PORTF_DIR_R |= 0x02;
+    GPIO_PORTF_DEN_R |= 0x02;
+    GPIO_PORTF_CR_R  |= 0x02;
+
+    LCD_cmd(0x38);
+    delay(5);
+    LCD_cmd(0x06);
+    delay(5);
+    LCD_cmd(0x0C);
+    delay(5);
+    LCD_cmd(0x01);
+    delay(5);
+    LCD_cmd(0x80);
+    delay(5);
+}
+
+void printdata(char data) {
+    (data & 0x01) ? (GPIO_PORTA_DATA_R |= (1 << 7)) : (GPIO_PORTA_DATA_R &= ~(1 << 7));
+    (data & 0x02) ? (GPIO_PORTA_DATA_R |= (1 << 6)) : (GPIO_PORTA_DATA_R &= ~(1 << 6));
+    (data & 0x04) ? (GPIO_PORTA_DATA_R |= (1 << 5)) : (GPIO_PORTA_DATA_R &= ~(1 << 5));
+    (data & 0x08) ? (GPIO_PORTB_DATA_R |= (1 << 4)) : (GPIO_PORTB_DATA_R &= ~(1 << 4));
+    (data & 0x10) ? (GPIO_PORTF_DATA_R |= (1 << 1)) : (GPIO_PORTF_DATA_R &= ~(1 << 1));
+    (data & 0x20) ? (GPIO_PORTD_DATA_R |= (1 << 3)) : (GPIO_PORTD_DATA_R &= ~(1 << 3));
+    (data & 0x40) ? (GPIO_PORTB_DATA_R |= (1 << 1)) : (GPIO_PORTB_DATA_R &= ~(1 << 1));
+    (data & 0x80) ? (GPIO_PORTB_DATA_R |= (1 << 0)) : (GPIO_PORTB_DATA_R &= ~(1 << 0));
+}
+
+void LCD_cmd(char cmd) {
+    printdata(cmd);
+    CLR_BIT(GPIO_PORTD_DATA_R, 1);  // RW = 0
+    CLR_BIT(GPIO_PORTD_DATA_R, 0);  // RS = 0
+    SET_BIT(GPIO_PORTD_DATA_R, 2);  // EN = 1
+    delay(2);
+    CLR_BIT(GPIO_PORTD_DATA_R, 2);  // EN = 0
+}
+
+void LCD_data(char data) {
+    printdata(data);
+    CLR_BIT(GPIO_PORTD_DATA_R, 1);  // RW = 0
+    SET_BIT(GPIO_PORTD_DATA_R, 0);  // RS = 1
+    SET_BIT(GPIO_PORTD_DATA_R, 2);  // EN = 1
+    delay(2);
+    CLR_BIT(GPIO_PORTD_DATA_R, 2);  // EN = 0
+}
+
+void LCD_string(char *str, char len) {
+    char i;
+    for (i = 0; i < len; i++) {
+        LCD_data(str[i]);
+    }
+}*/

@@ -7,7 +7,7 @@
 
 #define SET_BIT(reg,bit) reg|=(1<<bit) //Set a specific bit in a register (bit position 0-31
 
-#define GET_BIT(reg,bit) (reg&(1<<bit))>>bit //Get the value (0 or 1) of a specific bit in a register 
+#define GET_BIT(reg,bit) (((reg) >> (bit)) & 1) //Get the value (0 or 1) of a specific bit in a register 
 
 #define CLR_BIT(reg,bit) reg&=(~(1<<bit)) //Clear a specific bit in a register (bit position 0-31)
 

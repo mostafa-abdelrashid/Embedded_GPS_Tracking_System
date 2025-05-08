@@ -48,7 +48,7 @@
           <OutputName>Embedded_GPS_Tracking_System</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\</ListingPath>
@@ -119,7 +119,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>1</UseSimulator>
+            <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -131,7 +131,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
-            <UseTarget>0</UseTarget>
+            <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -144,7 +144,7 @@
             <UsePdscDebugDescription>0</UsePdscDebugDescription>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>2</TargetSelection>
+          <TargetSelection>3</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -170,7 +170,7 @@
             <Capability>1</Capability>
             <DriverSelection>4097</DriverSelection>
           </Flash1>
-          <bUseTDR>1</bUseTDR>
+          <bUseTDR>0</bUseTDR>
           <Flash2>BIN\lmidk-agdi.dll</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
@@ -499,6 +499,36 @@
               <FileName>APP.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\APP\APP.c</FilePath>
+            </File>
+            <File>
+              <FileName>Systick_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Test\Systick_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>Uart_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Test\Uart_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>Eeprom_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Test\Eeprom_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>GPIO_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Test\GPIO_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Headers\HAL\LCD.h</FilePath>
+            </File>
+            <File>
+              <FileName>LCD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\LCD.c</FilePath>
             </File>
           </Files>
         </Group>
