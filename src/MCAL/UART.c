@@ -4,21 +4,47 @@
 #include "../../Services/tm4c123gh6pm.h"
 #include "../../Services/Bit_Utilities.h"
 
-// UART0_initialization
+
+
 void UART0_Init(void){
-    SET_BIT(SYSCTL_RCGCUART_R,UART0); // activate UART0 clock
-    while(GET_BIT(SYSCTL_PRUART_R,UART0)==0); // wait for activation
-    SET_BIT(SYSCTL_RCGCGPIO_R,UART_PORTA);  // activate PORTA GPIO clock
-    while(GET_BIT(SYSCTL_PRGPIO_R,UART_PORTA)==0);
-    CLR_BIT(UART0_CTL_R,0); // disable UART0
-    UART0_IBRD_R=0x68;      // 104 for 9600 baud @16MHz
-    UART0_FBRD_R=0xB;       // 11
-    UART0_LCRH_R=0x70;      // 8-bits data & enable fifo
-    UART0_CTL_R=0x301;      // enable UART0, RX, TX
-    SET(GPIO_PORTA_AFSEL_R,UART0_PINS); // alt function PA0,PA1
-    GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R & 0xFFFFFF00) + 0x00000011;
-    SET(GPIO_PORTA_DEN_R,UART0_PINS); // digital enable A0,A1
-    CLR(GPIO_PORTA_AMSEL_R,UART0_PINS); // disable analog A0,A1
+	
+	SYSCTL_RCGCUART_R |= 0x01;
+	SYSCTL_RCGCGPIO_R |= 0x01;
+	while ((SYSCTL_PRUART_R & 0x01) == 0) {};
+	while ((SYSCTL_PRGPIO_R & 0x01) == 0) {};
+	UART0_CTL_R = ~0x01; // Clear UARTEN bit (bit 0)
+	UART0_IBRD_R = 104; // Integer part
+  UART0_FBRD_R = 11; // Fractional part (0.1667 × 64 + 0.5 ˜ 11)
+	UART0_LCRH_R = 0x70; // 8-bit word length (WLEN=11), enable FIFO (FEN=1)
+	// 6. Enable UART, TX, and RX
+	UART0_CTL_R = 0x301; // Enable UARTEN (bit 0), TXE (bit 8), RXE (bit 9)
+	// 7. Configure GPIO pins for UART
+	GPIO_PORTA_AFSEL_R |= 0x03; // Enable alt function on PA0, PA1
+	GPIO_PORTA_PCTL_R |= 0x00000011; // Configure PA0 and PA1 for UART
+	GPIO_PORTA_DEN_R |= 0x03; // Digital enable on PA0, PA1
+	GPIO_PORTA_AMSEL_R &= ~0x03; // Disable analog on PA0, PA1
+    /*SET_BIT(SYSCTL_RCGCUART_R, UART0);          // Enable UART0 clock
+    while(GET_BIT(SYSCTL_PRUART_R, UART0) == 0);
+
+    SET_BIT(SYSCTL_RCGCGPIO_R, UART_PORTA);     // Enable GPIOA clock
+    while(GET_BIT(SYSCTL_PRGPIO_R, UART_PORTA) == 0);
+
+    CLR_BIT(UART0_CTL_R, 0);                    // Disable UART0
+
+    UART0_IBRD_R = 0x68;                        // Integer part: 104
+    UART0_FBRD_R = 0x0B;                        // Fractional: 11
+		//UART0_FBRD_R =34;
+		//UART0_IBRD_R =325;
+	  UART0_CC_R = 0x0;                           // Use system clock (16 MHz)
+    UART0_LCRH_R = 0x70;                        // 8-bit, no parity, 1 stop
+
+    // GPIO config
+    SET(GPIO_PORTA_AFSEL_R, UART0_PINS);        // Enable alt func PA0, PA1
+    GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R & 0xFFFFFF00) | 0x00000011;
+    SET(GPIO_PORTA_DEN_R, UART0_PINS);          // Digital enable
+    CLR(GPIO_PORTA_AMSEL_R, UART0_PINS);        // Disable analog
+
+    UART0_CTL_R = 0x301; */                       // Enable UART0, TXE, RXE
 }
 
 // UART2_initialization 

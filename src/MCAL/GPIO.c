@@ -23,24 +23,29 @@ void initPortB(void){	// could be used for LCD
 	GPIO_PORTB_PCTL_R = 0x00;
 }
 void initPortD(void){
-	SET_BIT(SYSCTL_RCGCGPIO_R,3);
-	while(GET_BIT(SYSCTL_PRGPIO_R,3) == 0);
-	GPIO_PORTD_LOCK_R = GPIO_LOCK_KEY;
-	GPIO_PORTD_CR_R = 0xC0;
-	GPIO_PORTD_AMSEL_R = 0x00;
-	GPIO_PORTD_AFSEL_R = 0xC0;
-	GPIO_PORTD_DEN_R = 0xC0;
-	GPIO_PORTD_PCTL_R = 0x11000000;
+    SET_BIT(SYSCTL_RCGCGPIO_R, 3);                     // Enable clock for Port D
+    while (GET_BIT(SYSCTL_PRGPIO_R, 3) == 0);          // Wait for it to be ready
+    
+    GPIO_PORTD_LOCK_R = GPIO_LOCK_KEY;                 // Unlock PD7
+    GPIO_PORTD_CR_R |= (1 << 7) | (1 << 6);            // Commit PD6 and PD7
+
+    GPIO_PORTD_AFSEL_R |= (1 << 6) | (1 << 7);         // Enable alternate function on PD6, PD7
+    GPIO_PORTD_PCTL_R &= ~0xFF000000;                  // Clear PCTL bits for PD6, PD7
+    GPIO_PORTD_PCTL_R |= 0x11000000;                   // Set PCTL to UART2: PD6=U2Rx, PD7=U2Tx
+
+    GPIO_PORTD_AMSEL_R &= ~((1 << 6) | (1 << 7));      // Disable analog mode
+    GPIO_PORTD_DEN_R |= (1 << 6) | (1 << 7);           // Digital enable for PD6 and PD7
 }
+
 void initPortE(void){
 	SET_BIT(SYSCTL_RCGCGPIO_R,4);
 	while(GET_BIT(SYSCTL_PRGPIO_R,4) == 0);
-	GPIO_PORTF_LOCK_R = GPIO_LOCK_KEY;
-	GPIO_PORTF_CR_R = 0x30;
-	GPIO_PORTF_AMSEL_R = 0x00;
-	GPIO_PORTF_AFSEL_R = 0x30;
-	GPIO_PORTF_DEN_R = 0x30;
-	GPIO_PORTF_PCTL_R = 0x00110000;
+	GPIO_PORTE_LOCK_R = GPIO_LOCK_KEY;
+	GPIO_PORTE_CR_R = 0x30;
+	GPIO_PORTE_AMSEL_R = 0x00;
+	GPIO_PORTE_AFSEL_R = 0x30;
+	GPIO_PORTE_DEN_R = 0x30;
+	GPIO_PORTE_PCTL_R = 0x00110000;
 }
 void initPortF(void){
 	SET_BIT(SYSCTL_RCGCGPIO_R,5);
