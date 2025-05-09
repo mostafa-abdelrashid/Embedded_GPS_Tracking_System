@@ -1,5 +1,6 @@
 
 ///////////////////////    TEST 5 FOR TESTING all DRIVERS     ////////////////////
+/*
 #include "../../Headers/MCAL/Systick.h"
 #include "../../Headers/MCAL/EEPROM.h"
 #include "../../Headers/MCAL/UART.h"
@@ -11,7 +12,14 @@
 #include "../../Test/Systick_test.c"
 #include "../../Services/Bit_Utilities.h"
 #include "../../Headers/HAL/LCD.h"
+#include "../../Headers/HAL/GPS.h"
+#include "../../Headers/HAL/LED.h"
 #include<stdint.h>
+#include<string.h>
+*/
+
+
+
 
 
 
@@ -31,6 +39,42 @@ int main(void){
         delay(500);                           // Delay 500 ms (assumes 16 MHz clock)
     }
 }*/
+/*
+int main(){
+			LED_Init();
+			UART0_Init();
+			LED_ToggleRed();
+	while(1){
+	UART0_SendString("deesha 3mak ya zeby   10i0i01i30i130i03");
+	}LED_ToggleRed();
+		UART0_SendString("deesha 3mak ya zeby   10i0i01i30i130i03");
+
+	
+			LCD_Init();
+		LCD_Clear();
+LCD_WriteData(' ');              // Write the leading space
+LCD_String("Ziad zebo kbeer"); 
+	
+	UART2_Init();
+	LCD_Init();
+	LCD_Clear();
+	LCD_WriteData(' ');
+	while(1){
+	//	LCD_WriteData(UART2_ReceiveChar());
+	}
+		
+
+}*/
+
+
+
+
+
+
+
+
+
+
     // Initialize system components
    /* Systick_Init();       // Required for delay functions
     UART0_Init();         // For debug output
@@ -89,7 +133,105 @@ int main(void) {
     }
 }*/
 ////////////////////////    TEST 3 for testing uart      ////////////////////
-#define RED_LED 1
+
+
+
+
+/*
+int main(){
+	 initLCD();
+		LCD_data('a');
+    while (1);       
+
+}*/
+
+	/*
+void initPortF(void);
+void delay(unsigned int ms);
+
+int main(void) {
+	/*
+    // Enable UART0 and GPIOA
+    SYSCTL_RCGCUART_R |= 0x01;     // UART0
+    SYSCTL_RCGCGPIO_R |= 0x01;     // GPIOA
+
+    while ((SYSCTL_PRUART_R & 0x01) == 0);  // Wait for UART0 ready
+    while ((SYSCTL_PRGPIO_R & 0x01) == 0);  // Wait for GPIOA ready
+
+    // Disable UART0 before config
+    UART0_CTL_R &= ~UART_CTL_UARTEN;
+
+    // Baud rate calculation for 80 MHz and 9600 baud
+    UART0_IBRD_R = 104;    // Integer part
+    UART0_FBRD_R = 11;     // Fractional part
+
+    UART0_LCRH_R = UART_LCRH_WLEN_8 | UART_LCRH_FEN; // 8-bit, FIFO
+    UART0_CTL_R = UART_CTL_UARTEN | UART_CTL_TXE | UART_CTL_RXE;
+
+    // Configure PA0, PA1 for UART
+    GPIO_PORTA_AFSEL_R |= 0x03;           // Alt func PA0, PA1
+    GPIO_PORTA_PCTL_R &= ~0xFF;           // Clear PCTL
+    GPIO_PORTA_PCTL_R |= 0x11;            // Set UART0 on PA0, PA1
+    GPIO_PORTA_DEN_R |= 0x03;             // Enable digital on PA0, PA1
+
+    // Wait for UART to be ready to transmit
+    while (UART0_FR_R & UART_FR_TXFF);    // Wait if FIFO is full
+
+    UART0_DR_R = 'A';   // Send character 'A'
+
+    while (1); // Infinite loop to halt after sending
+}
+
+    // 1. Initialize LEDs first for visual feedback
+    initPortF();
+    GPIO_PORTF_DATA_R = 0x0E; // Turn on all LEDs (RED|BLUE|GREEN)
+    delay(1000);
+    GPIO_PORTF_DATA_R = 0x00; // All off - shows init completed
+    
+    // 2. Initialize SysTick
+    Systick_Init();
+    GPIO_PORTF_DATA_R = 0x02; // Red ON (Systick init start)
+    delay(100);
+    GPIO_PORTF_DATA_R = 0x00; // All off
+    
+    // 3. Initialize UART with LED debug
+    GPIO_PORTF_DATA_R = 0x04; // Blue ON (UART init start)
+    UART0_Init();
+    delay(100);
+    GPIO_PORTF_DATA_R = 0x08; // Green ON (UART init success)
+    delay(300);
+    GPIO_PORTF_DATA_R = 0x00;
+    
+    // 4. Test transmission with full LED debug
+    while(1) {
+        // Pre-transmission check
+        GPIO_PORTF_DATA_R = 0x02; // Red ON
+        delay(50);
+        
+        // Verify UART is ready
+        if(UART0_FR_R & 0x20) { // If TX FIFO full
+            GPIO_PORTF_DATA_R = 0x0A; // Red+Green (error state)
+            delay(1000);
+            continue;
+        }
+        
+        // Send character
+        UART0_DR_R = 'A';
+        
+        // Post-transmission verification
+        GPIO_PORTF_DATA_R = 0x08; // Green ON
+        delay(50);
+        
+        // Check for transmission completion
+        while(UART0_FR_R & 0x20); // Wait until not busy
+        GPIO_PORTF_DATA_R = 0x00;
+        delay(500);
+    }
+		
+
+
+
+/*#define RED_LED 1
 #define BLUE_LED 2
 #define GREEN_LED 3
 int main(void) {
@@ -101,12 +243,13 @@ int main(void) {
 		delay(10000);
     UART0_Init(); // Connects to PC
 	  TOG_BIT(GPIO_PORTF_DATA_R, BLUE_LED);
-	
-     UART0_SendChar('c');	
-    //UART0_SendString("UART0 test: Enter text\r\n");
+
+     UART0_SendChar('B');	
+    UART0_SendString("UART0 test: Enter text\r\n");
 	
 
     }
+*/
 
 ////////////////////////    TEST 2 for testing eeprom   ////////////////////
 /*
@@ -178,9 +321,9 @@ int main(void) {
 */
 
 
+//////////////////////  Main Code //////////////////////////////////////////////////
 
-
-/*#include "../../Services/tm4c123gh6pm.h"
+#include "../../Services/tm4c123gh6pm.h"
 #include "../../Services/Bit_Utilities.h"
 #include "../../Headers/MCAL/UART.h"
 #include "../../Headers/MCAL/Systick.h"
@@ -188,52 +331,50 @@ int main(void) {
 #include "../../Headers/MCAL/EEPROM.h"
 #include "../../Headers/HAL/GPS.h"
 #include "../../Headers/HAL/Landmarks.h"
+#include "../../Headers/HAL/LCD.h"
 #include "../../Headers/APP/APP.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
 
-int flag;
 float minDistance;
 float distance;
 unsigned char firstDistance = 0;
-Landmark landmarks[MAX_LANDMARKS];
-Landmark* nearestLandmark;
+const Landmark* nearestLandmark;
+int i;
 
 int main() {
     Systick_Init();
 		initPortA();
-		initPortD();
+		initPortB();
+		LCD_Init();
 		UART0_Init();
 		UART2_Init();
-		flag = EEPROM_Init();
-	  // if recovery failed return an error message and terminate the program
-		if(flag == 0){
-			UART0_SendString("EEPROM Failed");
-			return 0;
-		}
-		Landmarks_EEPROM_ReadAll(landmarks);
+		
     while(1) {
 			GPS_read();
 			GPS_ParseData();
 			// in the beginning default the first location in the landmarks array as the nearest location for comparisons;
 			if(firstDistance == 0){
-				minDistance = GET_Distance(currentLong,currentLat,landmarks[0].longitude,landmarks[0].latitude);
-				nearestLandmark = &landmarks[0];
+				minDistance = GET_Distance(currentLong,currentLat,presetLandmarks[0].longitude,presetLandmarks[0].latitude);
+				nearestLandmark = &presetLandmarks[0];
 				firstDistance = 1;
 			}
-			else{
-				int i;
-				for(i = 0; i < MAX_LANDMARKS; i++){
-					distance = GET_Distance(currentLong,currentLat,landmarks[i].longitude,landmarks[i].latitude);
-					if(distance < minDistance){
-						minDistance = distance;
-						nearestLandmark = &landmarks[i];
-					}
+			for(i = 0; i < MAX_LANDMARKS; i++){
+				distance = GET_Distance(currentLong,currentLat,presetLandmarks[i].longitude,presetLandmarks[i].latitude);
+				if(distance < minDistance){
+					minDistance = distance;
+					nearestLandmark = &presetLandmarks[i];
 				}
-				if(minDistance <= 10.0f) UART0_SendString(nearestLandmark->name); // Name appears only if near location (about 10 meters radius)
 			}
+			if(minDistance <= 10.0f){
+				UART0_SendString((char*)nearestLandmark->name); // Name appears only if near location (about 10 meters radius)
+				LCD_Clear();
+				LCD_WriteData(' ');              // Write the leading space
+				LCD_String((char*)nearestLandmark->name);	
+			} 
+			delay(500);	
     }
 		
-}*/
+}
 

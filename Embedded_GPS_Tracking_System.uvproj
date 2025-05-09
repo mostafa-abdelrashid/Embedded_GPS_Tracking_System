@@ -431,11 +431,6 @@
               <FilePath>.\Services\tm4c123gh6pm.h</FilePath>
             </File>
             <File>
-              <FileName>system_TM4C123.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Services\system_TM4C123.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\APP\main.c</FilePath>
@@ -529,6 +524,21 @@
               <FileName>LCD.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\HAL\LCD.c</FilePath>
+            </File>
+            <File>
+              <FileName>system_TM4C123.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\system_TM4C123.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Headers\HAL\LED.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\HAL\LED.c</FilePath>
             </File>
           </Files>
         </Group>

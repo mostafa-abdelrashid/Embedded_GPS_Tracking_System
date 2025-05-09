@@ -1,15 +1,6 @@
-#include "../../Services/tm4c123gh6pm.h"
-#include "../../Services/Bit_Utilities.h"
-#include "../../Headers/MCAL/UART.h"
-#include "../../Headers/MCAL/Systick.h"
-#include "../../Headers/MCAL/GPIO.h"
-#include "../../Headers/MCAL/EEPROM.h"
-#include "../../Headers/HAL/Landmarks.h"
-#include "../../Headers/APP/APP.h"
-#include "../../Headers/HAL/GPS.h"
-#include <stdio.h>
+
 #include <stdint.h>
-#include <math.h>
+#include "../../Services/tm4c123gh6pm.h"
 
 // Add a small delay function for stabilization
 static void delayMs(int ms) {
