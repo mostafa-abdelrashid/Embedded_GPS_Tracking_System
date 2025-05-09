@@ -1,5 +1,6 @@
 
 ///////////////////////    TEST 5 FOR TESTING all DRIVERS     ////////////////////
+/*
 #include "../../Headers/MCAL/Systick.h"
 #include "../../Headers/MCAL/EEPROM.h"
 #include "../../Headers/MCAL/UART.h"
@@ -15,7 +16,7 @@
 #include "../../Headers/HAL/LED.h"
 #include<stdint.h>
 #include<string.h>
-
+*/
 
 
 
@@ -38,6 +39,7 @@ int main(void){
         delay(500);                           // Delay 500 ms (assumes 16 MHz clock)
     }
 }*/
+/*
 int main(){
 			LED_Init();
 			UART0_Init();
@@ -48,7 +50,7 @@ int main(){
 		UART0_SendString("deesha 3mak ya zeby   10i0i01i30i130i03");
 
 	
-	/*		LCD_Init();
+			LCD_Init();
 		LCD_Clear();
 LCD_WriteData(' ');              // Write the leading space
 LCD_String("Ziad zebo kbeer"); 
@@ -59,10 +61,10 @@ LCD_String("Ziad zebo kbeer");
 	LCD_WriteData(' ');
 	while(1){
 	//	LCD_WriteData(UART2_ReceiveChar());
-	}*/
+	}
 		
 
-}
+}*/
 
 
 
@@ -319,9 +321,9 @@ int main(void) {
 */
 
 
+//////////////////////  Main Code //////////////////////////////////////////////////
 
-
-/*#include "../../Services/tm4c123gh6pm.h"
+#include "../../Services/tm4c123gh6pm.h"
 #include "../../Services/Bit_Utilities.h"
 #include "../../Headers/MCAL/UART.h"
 #include "../../Headers/MCAL/Systick.h"
@@ -329,52 +331,50 @@ int main(void) {
 #include "../../Headers/MCAL/EEPROM.h"
 #include "../../Headers/HAL/GPS.h"
 #include "../../Headers/HAL/Landmarks.h"
+#include "../../Headers/HAL/LCD.h"
 #include "../../Headers/APP/APP.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
 
-int flag;
 float minDistance;
 float distance;
 unsigned char firstDistance = 0;
-Landmark landmarks[MAX_LANDMARKS];
-Landmark* nearestLandmark;
+const Landmark* nearestLandmark;
+int i;
 
 int main() {
     Systick_Init();
 		initPortA();
-		initPortD();
+		initPortB();
+		LCD_Init();
 		UART0_Init();
 		UART2_Init();
-		flag = EEPROM_Init();
-	  // if recovery failed return an error message and terminate the program
-		if(flag == 0){
-			UART0_SendString("EEPROM Failed");
-			return 0;
-		}
-		Landmarks_EEPROM_ReadAll(landmarks);
+		
     while(1) {
 			GPS_read();
 			GPS_ParseData();
 			// in the beginning default the first location in the landmarks array as the nearest location for comparisons;
 			if(firstDistance == 0){
-				minDistance = GET_Distance(currentLong,currentLat,landmarks[0].longitude,landmarks[0].latitude);
-				nearestLandmark = &landmarks[0];
+				minDistance = GET_Distance(currentLong,currentLat,presetLandmarks[0].longitude,presetLandmarks[0].latitude);
+				nearestLandmark = &presetLandmarks[0];
 				firstDistance = 1;
 			}
-			else{
-				int i;
-				for(i = 0; i < MAX_LANDMARKS; i++){
-					distance = GET_Distance(currentLong,currentLat,landmarks[i].longitude,landmarks[i].latitude);
-					if(distance < minDistance){
-						minDistance = distance;
-						nearestLandmark = &landmarks[i];
-					}
+			for(i = 0; i < MAX_LANDMARKS; i++){
+				distance = GET_Distance(currentLong,currentLat,presetLandmarks[i].longitude,presetLandmarks[i].latitude);
+				if(distance < minDistance){
+					minDistance = distance;
+					nearestLandmark = &presetLandmarks[i];
 				}
-				if(minDistance <= 10.0f) UART0_SendString(nearestLandmark->name); // Name appears only if near location (about 10 meters radius)
 			}
+			if(minDistance <= 10.0f){
+				UART0_SendString((char*)nearestLandmark->name); // Name appears only if near location (about 10 meters radius)
+				LCD_Clear();
+				LCD_WriteData(' ');              // Write the leading space
+				LCD_String((char*)nearestLandmark->name);	
+			} 
+			delay(500);	
     }
 		
-}*/
+}
 
