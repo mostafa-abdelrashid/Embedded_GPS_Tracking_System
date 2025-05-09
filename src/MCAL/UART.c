@@ -5,39 +5,38 @@
 #include "../../Services/tm4c123gh6pm.h"
 #include "../../Services/Bit_Utilities.h"
 #include "../../Headers/Mcal/GPIO.h"
+#include "../../Headers/Mcal/Systick.h"
+
 
 void UART0_Init(void) {
-    // 1. Enable clocks
-    SYSCTL_RCGCUART_R |= 0x01;
-    SYSCTL_RCGCGPIO_R |= 0x01;
-    
-    // Wait for peripheral readiness
-    while((SYSCTL_PRUART_R & 0x01) == 0);
-    while((SYSCTL_PRGPIO_R & 0x01) == 0);
+	
+    SYSCTL_RCGCUART_R |= 0x01;  // Enable UART0
+    SYSCTL_RCGCGPIO_R |= 0x01;  // Enable PORTA (UART0 is on PA0, PA1)
 
-    // 2. Disable UART during config
-    UART0_CTL_R &= ~0x01;
-    
-    // 3. Baud rate 115200 (16MHz clock)
-    UART0_IBRD_R = 104;
-    UART0_FBRD_R = 11;
-    
-    // 4. 8-bit, FIFO enabled
-    UART0_LCRH_R = 0x70;
-    
-    // 5. GPIO configuration
-    GPIO_PORTA_AFSEL_R |= 0x03;
-    GPIO_PORTA_PCTL_R |= 0x00000011;
-    GPIO_PORTA_DEN_R |= 0x03;
-    
-    // 6. Enable UART
-    UART0_CTL_R |= 0x301;
-		
+    while ((SYSCTL_PRUART_R & 0x01) == 0); // Wait until UART0 is ready
+    while ((SYSCTL_PRGPIO_R & 0x01) == 0); // Wait until PORTA is ready
+
+    UART0_CTL_R &= ~0x01;       // Disable UART0
+
+    UART0_IBRD_R = 104;         // Integer part of BRD (9600 baud, 16MHz)
+    UART0_FBRD_R = 11;          // Fractional part
+
+    UART0_LCRH_R = 0x70;        // 8-bit, no parity, 1-stop, FIFOs enabled
+    UART0_CTL_R = 0x301;        // Enable UART0, TXE, RXE
+
+    GPIO_PORTA_AFSEL_R |= 0x03; // Enable alt function on PA0, PA1
+    GPIO_PORTA_PCTL_R = (GPIO_PORTA_PCTL_R & ~0xFF) + 0x11; // UART
+    GPIO_PORTA_DEN_R |= 0x03;   // Digital on PA0, PA1
+    GPIO_PORTA_AMSEL_R &= ~0x03;// Disable analog on PA0, PA1
+	  delay(100);                 //delay for peripheral clock to stabalize 
 }
 
+void UART0_WaitForTxReady(void) {
+    while ((UART0_FR_R & 0x20));  // Wait until TX FIFO is not full
+}
 void UART0_SendChar(char data) {
-    while(UART0_FR_R & 0x20);        // Wait until TX FIFO not full
-    UART0_DR_R = data;
+		UART0_WaitForTxReady();    // Wait until TX FIFO not full
+    UART0_DR_R = data; 
 }
 
 void UART0_SendString(char *pt) {

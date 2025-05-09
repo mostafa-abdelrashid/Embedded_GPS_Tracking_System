@@ -12,19 +12,14 @@
 #include "../../Services/Bit_Utilities.h"
 #include "../../Headers/HAL/LCD.h"
 #include "../../Headers/HAL/GPS.h"
+#include "../../Headers/HAL/LED.h"
 #include<stdint.h>
 #include<string.h>
 
 
 
 
-int main(void) {
-    initPortF();                   // Initialize LEDs
-    UART0_Init(); 
 
-	UART0_SendChar('K');
-
-}
 
 
 /*void PortF_Init(void){
@@ -43,28 +38,31 @@ int main(void){
         delay(500);                           // Delay 500 ms (assumes 16 MHz clock)
     }
 }*/
-/*int main(){
-	/*
-				char x='a';
+int main(){
+			LED_Init();
 			UART0_Init();
-		
-			UART0_SendChar(x);
+			LED_ToggleRed();
+	while(1){
+	UART0_SendString("deesha 3mak ya zeby   10i0i01i30i130i03");
+	}LED_ToggleRed();
+		UART0_SendString("deesha 3mak ya zeby   10i0i01i30i130i03");
+
 	
-			LCD_Init();
+	/*		LCD_Init();
 		LCD_Clear();
 LCD_WriteData(' ');              // Write the leading space
-LCD_String("Kandeel 3mak"); 
-	*/
-/*	UART2_Init();
+LCD_String("Ziad zebo kbeer"); 
+	
+	UART2_Init();
 	LCD_Init();
 	LCD_Clear();
 	LCD_WriteData(' ');
 	while(1){
-		LCD_WriteData(UART2_ReceiveChar());
-	}
+	//	LCD_WriteData(UART2_ReceiveChar());
+	}*/
 		
 
-}*/
+}
 
 
 

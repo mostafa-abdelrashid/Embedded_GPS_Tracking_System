@@ -33,7 +33,7 @@
 // will be configured according to the macros in the rest of this file.
 // If it is defined to be 0, then the system clock configuration is bypassed.
 //
-#define CLOCK_SETUP 1
+#define CLOCK_SETUP 0
 
 //********************************* RCC ***************************************
 //
@@ -56,7 +56,6 @@
 // system divider is defined by SYSDIV (see above).  If the value is 0, then
 // the system clock divider is not used.
 //
-#define CFG_RCC_USESYSDIV 1
 
 //      <q> USEPWMDIV: Enable PWM Clock Divider
 //          <i> Check this box to use the PWM Clock Divider
@@ -96,7 +95,6 @@
 // must also be set to 1.  If you are using the PLL, then this value must be
 // set to 0.
 //
-#define CFG_RCC_PWRDN 0
 
 //      <q> BYPASS: PLL Bypass
 //          <i> Check this box to not use the PLL for the System Clock
@@ -105,127 +103,17 @@
 // system clock.  You must set this to 1 if PWRDN (above) is set to 1.  Set
 // this to 0 if you are using the PLL.
 //
-#define CFG_RCC_BYPASS 0
+#define CFG_RCC_BYPASS       1
+#define CFG_RCC_PWRDN        1
+#define CFG_RCC_XTAL         0x15  // 16 MHz
+#define CFG_RCC_OSCSRC       0x0   // MOSC
+#define CFG_RCC_MOSCDIS      0     // Don't disable main osc
+#define CFG_RCC_USESYSDIV    0     // Don't use PLL divider
 
-//      <o> XTAL: Crystal Value
-//              < 0=>  0: 1.0000 MHz  (can not be used with PLL)
-//              < 1=>  1: 1.8432 MHz  (can not be used with PLL)
-//              < 2=>  2: 2.0000 MHz  (can not be used with PLL)
-//              < 3=>  3: 2.4576 MHz  (can not be used with PLL)
-//              < 4=>  4: 3.579545 MHz
-//              < 5=>  5: 3.6864 MHz
-//              < 6=>  6: 4.0000 MHz
-//              < 7=>  7: 4.096 MHz
-//              < 8=>  8: 4.9152 MHz
-//              < 9=>  9: 5.0000 MHz
-//              <10=> 10: 5.12 MHz
-//              <11=> 11: 6.0000 MHz (default)
-//              <12=> 12: 6.144 MHz
-//              <13=> 13: 7.3728 MHz
-//              <14=> 14: 8.0000 MHz
-//              <15=> 15: 8.192 MHz
-//              <16=> 16: 10.0 MHz
-//              <17=> 17: 12.0 MHz
-//              <18=> 18: 12.288 MHz
-//              <19=> 19: 13.56 MHz
-//              <20=> 20: 14.31818 MHz
-//              <21=> 21: 16.0 MHz
-//              <22=> 22: 16.384 MHz
-//          <i> This is the crystal frequency used for the main oscillator
-//
-// This value defines the crystal frequency for the main oscillator, according
-// to the table in the comments above.  If an external crystal is used, then
-// this value must be set to match the value of the crystal.
-//
-#define CFG_RCC_XTAL 21
-
-//      <o> OSCSRC: Oscillator Source
-//              <0=> 0: MOSC Main oscillator
-//              <1=> 1: IOSC Internal oscillator (default)
-//              <2=> 2: IOSC/4 Internal oscillator / 4 (this is necessary if used as input to PLL)
-//              <3=> 3: 30kHz 30-KHz internal oscillator
-//          <i> Chooses the oscillator that is used for the system clock,
-//          <i> or the PLL input.
-//
-// The following value chooses the oscillator source according to the table in
-// the comments above.
-//
-#define CFG_RCC_OSCSRC 0
-
-//      <q> IOSCDIS: Internal Oscillator Disable
-//          <i> Check this box to turn off the internal oscillator
-//
-// Set the following value to 1 to turn off the internal oscillator.  This
-// value can be set to 1 if you are not using the internal oscillator.
-//
-#define CFG_RCC_IOSCDIS 1
-
-//      <q> MOSCDIS: Main Oscillator Disable
-//          <i> Check this box to turn off the main oscillator
-//
-// Set the following value to 1 to turn off the main oscillator.  This
-// value can be set to 1 if you are not using the main oscillator.
-//
-#define CFG_RCC_MOSCDIS 0
-
-//  </h>
-
-//********************************* RCC2 **************************************
-//
-//   <h> Run-Mode Clock Configuration 2 (RCC2)
-
-//      <q> USERCC2: Use RCC2
-//          <i> Check this box to override some fields in RCC.  RCC2 provides
-//          <i> more bits for the system clock divider, and provides an
-//          <i> additional oscillator source.  If you do not need these
-//          <i> additional features, then leave this box unchecked.
-//
-// Set the following value to 1 to use the RCC2 register.  The RCC2 register
-// overrides some of the fields in the RCC register if it is used.
-//
-#define CFG_RCC2_USERCC2 0
-
-//      <o> SYSDIV2: System Clock Divisor <2-64>
-//          <i> Specifies the divisor used to generate the system clock from
-//          <i> either the PLL output of 200 MHz, or the oscillator.
-//
-// The following value is the system clock divisor.  This will be applied if
-// USESYSDIV in RCC is enabled.  The valid range of dividers is 2-64.
-//
-#define CFG_RCC_SYSDIV2 4
-
-//      <q> PWRDN2: Power Down PLL
-//          <i> Check this box to disable the PLL.  You must also choose
-//          <i> PLL Bypass.
-//
-// If the following value is 1, then the PLL is powered down.  Keep this value
-// as 1 if you do not need to use the PLL.  In this case, BYPASS2 (see below)
-// must also be set to 1.  If you are using the PLL, then this value must be
-// set to 0.
-//
-#define CFG_RCC_PWRDN2 0
-
-//      <q> BYPASS2: Bypass PLL
-//          <i> Check this box to not use the PLL for the System Clock
-//
-// Set the following value to 1 to bypass the PLL and not use it for the
-// system clock.  You must set this to 1 if PWRDN2 (above) is set to 1.  Set
-// this to 0 if you are using the PLL.
-//
-#define CFG_RCC_BYPASS2 0
-
-//      <o> OSCSRC2: Oscillator Source
-//              <0=> 0: MOSC Main oscillator
-//              <1=> 1: IOSC Internal oscillator (default)
-//              <2=> 2: IOSC/4 Internal oscillator / 4 (this is necessary if used as input to PLL)
-//              <3=> 3: 30kHz 30-kHz internal oscillator
-//              <7=> 7: 32kHz 32.768-kHz external oscillator
-//          <i> The oscillator that is used for the system clock, or the PLL input.
-//
-// The following value chooses the oscillator source according to the table in
-// the comments above.
-//
-#define CFG_RCC_OSCSRC2 0
+#define CFG_RCC2_USERCC2     0     // Use RCC only
+#define CFG_RCC2_BYPASS2     1
+#define CFG_RCC2_PWRDN2      1
+#define CFG_RCC2_OSCSRC2     0x0
 
 //  </h>
 //
@@ -237,29 +125,9 @@
 // The following macros are used to program the RCC and RCC2 registers in
 // the SystemInit() function.  Edit the macros above to change these values.
 //
-#define RCC_Val                                                               \
-(                                                                             \
-    ((CFG_RCC_SYSDIV - 1)   << 23) |                                          \
-    (CFG_RCC_USESYSDIV      << 22) |                                          \
-    (CFG_RCC_USEPWMDIV      << 20) |                                          \
-    (CFG_RCC_PWMDIV         << 17) |                                          \
-    (CFG_RCC_PWRDN          << 13) |                                          \
-    (CFG_RCC_BYPASS         << 11) |                                          \
-    (CFG_RCC_XTAL           << 6)  |                                          \
-    (CFG_RCC_OSCSRC         << 4)  |                                          \
-    (CFG_RCC_IOSCDIS        << 1)  |                                          \
-    (CFG_RCC_MOSCDIS        << 1)\
-)
-
-#define RCC2_Val                                                              \
-(                                                                             \
-    (CFG_RCC2_USERCC2      << 31) |                                           \
-    ((CFG_RCC_SYSDIV2 - 1)  << 23) |                                          \
-    (CFG_RCC_PWRDN2         << 13) |                                          \
-    (CFG_RCC_BYPASS2        << 11) |                                          \
-    (CFG_RCC_OSCSRC2        << 4)\
-)
-
+#define RCC_Val     \
+( (CFG_RCC_BYPASS << 11) | (CFG_RCC_XTAL << 6) | (CFG_RCC_OSCSRC << 4) )
+#define RCC2_Val    0x00000000
 
 /*----------------------------------------------------------------------------
   Define clocks
@@ -572,40 +440,29 @@ void SystemCoreClockUpdate (void)            /* Get Core Clock Frequency      */
  *         Initialize the System.
  */
 
-void SystemInit (void)
-{
-#if(CLOCK_SETUP)
-    uint32_t i;
-#endif
+void SystemInit(void) {
+    // Enable FPU (optional)
+    SCB->CPACR |= ((3UL << 20) | (3UL << 22));
 
-  
-  #if (__FPU_USED == 1)
-    SCB->CPACR |= ((3UL << 10*2) |                 /* set CP10 Full Access */
-                 (3UL << 11*2)  );               /* set CP11 Full Access */
-  #endif
+    // Use RCC, not RCC2
+    SYSCTL->RCC2 = 0;
 
-#if(CLOCK_SETUP)
-    SYSCTL->RCC2 = 0x07802810;    /* set default value */
-    SYSCTL->RCC  = 0x078E3AD1;    /* set default value */
+    // Enable Main Oscillator
+    SYSCTL->RCC &= ~(1 << 0);   // Clear MOSCDIS
 
-    SYSCTL->RCC  = (RCC_Val  | (1UL<<11) | (1UL<<13)) & ~(1UL<<22); /* set value with BYPASS, PWRDN set, USESYSDIV reset */
-    SYSCTL->RCC2 = (RCC2_Val | (1UL<<11) | (1UL<<13));              /* set value with BYPASS, PWRDN set */
-    for (i = 0; i < 1000; i++);   /* wait a while */
+    // Set XTAL to 16 MHz
+    SYSCTL->RCC &= ~(0x1F << 6);
+    SYSCTL->RCC |= (0x15 << 6); // XTAL = 0x15 = 16 MHz
 
-    SYSCTL->RCC  = (RCC_Val  | (1UL<<11)) & ~(1UL<<22);             /* set value with BYPASS, USESYSDIV reset */
-    SYSCTL->RCC2 = (RCC2_Val | (1UL<<11));                          /* set value with BYPASS */
-    for (i = 0; i < 1000; i++);   /* wait a while */
+    // Use Main Oscillator as source
+    SYSCTL->RCC &= ~(0x3 << 4); // OSCSRC = 0x0 => MOSC
 
-   SYSCTL->RCC  = (RCC_Val  | (1<<11));                            /* set value with BYPASS */
+    // Bypass PLL
+    SYSCTL->RCC |= (1 << 11);   // BYPASS
 
-    if ( (((RCC_Val  & (1UL<<13)) == 0) && ((RCC2_Val & (1UL<<31)) == 0)) ||
-         (((RCC2_Val & (1UL<<13)) == 0) && ((RCC2_Val & (1UL<<31)) != 0))   ) {
-      while ((SYSCTL->RIS & (1UL<<6)) != (1UL<<6));                 /* wait until PLL is locked */
-    }
+    // Don't power down PLL (just in case)
+    SYSCTL->RCC &= ~(1 << 13);  // PWRDN = 0
 
-    SYSCTL->RCC  = (RCC_Val);                                       /* set value */
-    SYSCTL->RCC2 = (RCC2_Val);                                      /* set value */
-    for (i = 0; i < 10000; i++);   /* wait a while */
-
-#endif
+    // Disable system divider (use full clock)
+    SYSCTL->RCC &= ~(1 << 22);  // USESYSDIV = 0
 }
