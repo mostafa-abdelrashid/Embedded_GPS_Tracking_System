@@ -1,43 +1,39 @@
 
 #include <stdint.h>
 #include "../../Services/tm4c123gh6pm.h"
+#include "../../Headers/MCAL/Systick.h"
 
-// Add a small delay function for stabilization
-static void delayMs(int ms) {
-    volatile int i, j;
-    for (i = 0; i < ms; i++)
-        for (j = 0; j < 1000; j++);
-}
+
 void LCD_WriteCommand(uint8_t cmd) {
     GPIO_PORTA_DATA_R = 0x00;   // RS=0 (command), E=0
     GPIO_PORTB_DATA_R = cmd;    // Send command
     GPIO_PORTA_DATA_R |= 0x80;  // Pulse E high (PA7)
-    delayMs(1);                 // ~1ms pulse width
+		delay(1);
     GPIO_PORTA_DATA_R &= ~0x80; // E low
-    delayMs(2);                 // Most commands need 2ms to execute
+    delay(2);                 // Most commands need 2ms to execute
 }
 void LCD_Init(void) {
     SYSCTL_RCGCGPIO_R |= 0x03;  // Enable Ports A and B
-    delayMs(10);                // Allow time for clock to stabilize
+    delay(10);                // Allow time for clock to stabilize
     
     GPIO_PORTA_DIR_R |= 0xE0;   // PA5-PA7 as output (RS, E)
     GPIO_PORTA_DEN_R |= 0xE0;
     GPIO_PORTB_DIR_R = 0xFF;    // PB0-PB7 as output (Data)
     GPIO_PORTB_DEN_R = 0xFF;
     
-    delayMs(20);                // Additional LCD power-up time
+    delay(20);                // Additional LCD power-up time
     
     // Extended initialization sequence
     LCD_WriteCommand(0x38);     // 8-bit mode, 2 lines, 5x7 font
-    delayMs(5);
+    delay(5);
     LCD_WriteCommand(0x38);     // Repeat for stabilization
-    delayMs(1);
+    delay(1);
     LCD_WriteCommand(0x38);     // Third time ensures reliability
-    delayMs(1);
+    delay(1);
     
     LCD_WriteCommand(0x0C);     // Display on, cursor off
     LCD_WriteCommand(0x01);     // Clear display
-    delayMs(2);                 // Clear display needs extra time
+    delay(2);                 // Clear display needs extra time
     LCD_WriteCommand(0x06);     // Entry mode: increment, no shift
 }
 
@@ -47,9 +43,9 @@ void LCD_WriteData(uint8_t data) {
     GPIO_PORTA_DATA_R = 0x20;   // RS=1 (data), E=0
     GPIO_PORTB_DATA_R = data;   // Send data
     GPIO_PORTA_DATA_R |= 0x80;  // Pulse E high (PA7)
-    delayMs(1);                 // ~1ms pulse width
+    delay(1);                 // ~1ms pulse width
     GPIO_PORTA_DATA_R &= ~0x80; // E low
-    delayMs(1);                 // Short delay between writes
+    delay(1);                 // Short delay between writes
 }
 
 void LCD_String(char* str) {
@@ -60,5 +56,5 @@ void LCD_String(char* str) {
 
 void LCD_Clear(void) {
     LCD_WriteCommand(0x01);     // Clear display
-    delayMs(3);                 // Clear needs extra time (up to 1.64ms)
+    delay(3);                 // Clear needs extra time (up to 1.64ms)
 }

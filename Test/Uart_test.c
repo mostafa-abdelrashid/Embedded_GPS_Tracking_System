@@ -1,42 +1,89 @@
-/*#include "../Headers/MCAL/UART.h"
-#include "../Services/tm4c123gh6pm.h"
+////////////////////////    TEST 3 for testing uart      ////////////////////
+/*#include "../Services/tm4c123gh6pm.h"
+#include "../Services/Bit_Utilities.h"
+#include "../Headers/MCAL/UART.h"
+#include "../Headers/MCAL/Systick.h"
+#include "../Headers/MCAL/GPIO.h"
+#include "../Headers/MCAL/EEPROM.h"
+#include "../Headers/HAL/GPS.h"
+#include "../Headers/HAL/Landmarks.h"
+#include "../Headers/HAL/LCD.h"
+#include "../Headers/HAL/LED.h"
+#include "../Headers/APP/APP.h"
+#include <stdio.h>
 #include <stdint.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
 
-void test_uart0(void) {
-    // Initialize UART0
-    UART0_Init();
+	
+
+extern char GPS[100];
+extern char GPS_Data[12][20];
+extern float currentLat, currentLong;
+
+int main() {
+		volatile int i;
+    // Initialize UARTs
+    UART0_Init();  // For PuTTY output
+    UART2_Init();  // For GPS input
     
-    // Initialize LED (PF2) for visual feedback
-    SYSCTL_RCGCGPIO_R |= (1<<5);
-    while((SYSCTL_PRGPIO_R & (1<<5)) == 0);
-    GPIO_PORTF_DIR_R |= (1<<2);
-    GPIO_PORTF_DEN_R |= (1<<2);
-    
-    // Loopback test
-    UART0_SendString("UART0 Test - Type characters:\r\n");
-    
+    UART0_SendString("GPS Test Started\r\n");
+    UART0_SendString("Waiting for satellite fix...\r\n");
+
     while(1) {
-        char c = UART0_ReceiveChar();
-        UART0_SendChar(c);  // Echo back
+        // 1. Read GPS data (using your existing HAL function)
+        GPS_read();
         
-        // Toggle LED on each received character
-        GPIO_PORTF_DATA_R ^= (1<<2);
+        // 2. Parse data (using your existing HAL function)
+        GPS_ParseData();
+        
+        // 3. Display results via PuTTY
+        if(strcmp(GPS_Data[1], "A") == 0) {  // Check if data is valid
+            UART0_SendString("Valid Fix: ");
+            
+            // Latitude
+            UART0_SendString("Lat: ");
+            UART0_SendString(GPS_Data[2]);
+            UART0_SendString(GPS_Data[3]);  // N/S
+            
+            // Longitude
+            UART0_SendString(", Lon: ");
+            UART0_SendString(GPS_Data[4]);
+            UART0_SendString(GPS_Data[5]);  // E/W
+            
+            // Optional: Print timestamp
+            UART0_SendString(", Time: ");
+            UART0_SendString(GPS_Data[0]);
+            
+            UART0_SendString("\r\n");
+        }
+        else {
+            UART0_SendString("No valid fix\r\n");
+        }
+        
+        // Delay between readings (~1 second)
+        for( i = 0; i < 1000000; i++);
     }
 }
+/////////////////////////  PREVIOUS TEST FOR TESTING UART    /////////////////////////
 
-void test_uart2(void) {
-    // Initialize UART2 (GPS)
-	    char buffer[100];
-    UART2_Init();
-    
-    // Test NMEA sentence reception
+#define RED_LED 1
+#define BLUE_LED 2
+#define GREEN_LED 3
+int main(void) {
+		
+	  char buffer[50];
+		initPortF();
+  
+		TOG_BIT(GPIO_PORTF_DATA_R, BLUE_LED);	
+		delay(10000);
+    UART0_Init(); // Connects to PC
+	  TOG_BIT(GPIO_PORTF_DATA_R, BLUE_LED);
 
-    UART0_SendString("Waiting for GPS data...\r\n");
-    
-    while(1) {
-        UART2_ReceiveString(buffer, sizeof(buffer));
-        UART0_SendString("Received: ");
-        UART0_SendString(buffer);
-        UART0_SendString("\r\n");
+     UART0_SendChar('B');	
+    UART0_SendString("UART0 test: Enter text\r\n");
+	
+
     }
-}*/
+*/

@@ -9,6 +9,7 @@ void UART0_SendChar(char data);
 void UART0_SendString(char *pt);
 char UART0_ReceiveChar(void);
 void UART0_ReceiveString(char *command, uint32_t length);
+void UART2_WaitForTxReady(void);
 void UART2_Init(void);
 void UART2_SendChar(char data);
 void UART2_SendString(char *pt);

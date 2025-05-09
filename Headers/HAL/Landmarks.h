@@ -18,3 +18,4 @@ void Landmarks_EEPROM_WriteAll(void);
 void Landmarks_EEPROM_ReadAll(Landmark* landmarksBuffer);
 
 #endif // LANDMARKS_H
+

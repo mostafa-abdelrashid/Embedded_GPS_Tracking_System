@@ -46,75 +46,83 @@ void UART0_SendString(char *pt) {
     }
 }
 
-char UART0_ReceiveChar() {
-    while(UART0_FR_R & 0x10);
-    return (char)UART0_DR_R;
+char UART0_ReceiveChar (){
+		while ((UART0_FR_R & 0x10));
+	return (char)UART0_DR_R;
 }
 
-void UART0_ReceiveString(char *command, uint32_t length) {
-    char character;
-    uint32_t i;
+
+void UART0_ReceiveString(char *buffer, uint32_t max_len) {
+    uint32_t i = 0;
+    char c;
     
-    for(i = 0; i < length; i++) {
-        character = UART0_ReceiveChar();
-        if(character != 0x0D) {  // Carriage return check
-            command[i] = character;
-            UART0_SendChar(command[i]);
+    while(i < max_len - 1) {
+        c = UART0_ReceiveChar();
+        
+        if(c == '\r' || c == '\n') { // Handle both CR and LF
+            buffer[i] = '\0'; // Null-terminate
+            return;
         }
-        else break;
+        // Remove this line to disable echo from MCU:
+        // UART0_SendChar(c); // (PuTTY already echoes locally)
+        buffer[i++] = c;
     }
+    buffer[i] = '\0'; // Safety termination
 }
 
 
 
 // Initialize UART2 for GPS on Port D (PD6=RX, PD7=TX)
-void UART2_Init (void){
-	SYSCTL_RCGCUART_R |= 0x0004; 	//activate UARTD
-	while((SYSCTL_PRUART_R & 0x0004) == 0);
-	SYSCTL_RCGCGPIO_R |= 0x0008;  //activate portD clk
-	while((SYSCTL_PRGPIO_R & 0x08) == 0);
-	UART2_CTL_R &= ~0x0001;				//disable UART
-	UART2_IBRD_R = 0x208;					//IBRD = int(80000000/(16*9600)) = int(520.8333)
-	UART2_FBRD_R = 0x35;					//FBRD = int (0.833*64 + 0.5)
-	UART2_CC_R =0;
-	UART2_LCRH_R = 0x070;					//8-bits Data + enable FIFO
-	UART2_CTL_R = 0x0301;					//activate RXE, TXE & UART
-	GPIO_PORTD_AFSEL_R |= 0xC0; 	//enable alternate function PD6 & PD7
-	GPIO_PORTD_PCTL_R = (GPIO_PORTD_PCTL_R & 0x00FFFFFF) + 0x11000000;
-	GPIO_PORTD_DEN_R |= 0XC0;			//enable digtal I/O 
-	GPIO_PORTD_AMSEL_R &= ~0XC0;	//disable analog I/O
-	
-	
+
+
+void UART2_WaitForTxReady(void) {
+    while ((UART2_FR_R & 0x20));  // Wait until TX FIFO is not full
 }
 
 void UART2_SendChar(char data) {
-    while(UART2_FR_R & 0x20);        // Wait until TX FIFO not full
+    UART2_WaitForTxReady();       // Wait until TX FIFO not full
     UART2_DR_R = data;
-    while(UART2_FR_R & 0x20);        // Wait until transmission complete
 }
 
 void UART2_SendString(char *pt) {
     while(*pt) {
-        UART2_SendChar(*pt++);
+        UART2_SendChar(*pt);
+        pt++;
     }
 }
 
-char UART2_ReceiveChar() {
-    while(UART2_FR_R & 0x10);        // Wait until data available
-    return (char)(UART2_DR_R & 0xFF); // Return 8-bit data
+void UART2_Init(void) {
+    SYSCTL_RCGCUART_R |= 0x04;      // Enable UART2 clock
+    SYSCTL_RCGCGPIO_R |= 0x08;      // Enable Port D clock
+    while ((SYSCTL_PRUART_R & 0x04) == 0); // Wait for UART2
+    while ((SYSCTL_PRGPIO_R & 0x08) == 0); // Wait for Port D
+
+    UART2_CTL_R &= ~0x01;           // Disable UART2
+    UART2_IBRD_R = 104;             // 9600 baud @16MHz
+    UART2_FBRD_R = 11;
+    UART2_LCRH_R = 0x70;            // 8-bit, FIFO enabled
+    GPIO_PORTD_AFSEL_R |= 0xC0;     // PD6+PD7 as UART
+    GPIO_PORTD_PCTL_R |= 0x11000000;
+    GPIO_PORTD_DEN_R |= 0xC0;       // Digital enable
+    UART2_CTL_R |= 0x301;           // Enable UART2 + TX/RX
 }
 
-void UART2_ReceiveString(char *buffer, uint32_t max_len) {
+char UART2_ReceiveChar(void) {
+    while (UART2_FR_R & 0x10);      // Wait for RX FIFO data
+    return (char)(UART2_DR_R & 0xFF);
+}
+
+void UART2_ReceiveString(char *buf, uint32_t max_len) {
     uint32_t i = 0;
     char c;
-    
-    while(i < max_len-1) {
+    while (i < max_len - 1) {
         c = UART2_ReceiveChar();
-        if(c == '\r' || c == '\n') break;
-        buffer[i++] = c;
+        if (c == '\r' || c == '\n') break;
+        buf[i++] = c;
     }
-    buffer[i] = '\0'; // Null-terminate
+    buf[i] = '\0';  // Null-terminate
 }
+//////////////////////////Some of the previous approaches /////////////////
 
 /*
 #include "../../Headers/Mcal/UART.h"
@@ -123,7 +131,7 @@ void UART2_ReceiveString(char *buffer, uint32_t max_len) {
 #include "../../Services/Bit_Utilities.h"
 #include "../../Headers/Mcal/GPIO.h"
 void UART0_Init (void){
-	/*SYSCTL_RCGCUART_R |= 0x0001; 	//activate UART0
+	SYSCTL_RCGCUART_R |= 0x0001; 	//activate UART0
 	while((SYSCTL_PRUART_R & 0x00000001) == 0);
 	SYSCTL_RCGCGPIO_R |= 0x0001;  //activate portA clk
 	while((SYSCTL_PRGPIO_R & 0x01) == 0);
@@ -214,7 +222,7 @@ int  UART0_isTxReady(void){
     return (UART0_FR_R & 0x20) == 0; // Check if TXFF is 0 (transmit FIFO not full)
 }
 
-/*void UART0_SendChar(char data){
+void UART0_SendChar(char data){
     while(GET_BIT(UART0_FR_R,5)); // Wait while TX FIFO full
     UART0_DR_R=data;
 }*/
@@ -301,3 +309,4 @@ void UART5_SendString(char* ptr){
     }
 }
 */
+

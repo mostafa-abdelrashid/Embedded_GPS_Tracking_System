@@ -8,6 +8,12 @@ void LED_Init(void) {
     GPIO_PORTF_DEN_R |= 0x02;
 }
 
-void LED_ToggleRed(void) {
+void RED(void) {
     GPIO_PORTF_DATA_R ^= 0x02;
+}
+void BLUE(void) {
+    GPIO_PORTF_DATA_R ^= 0x04;
+}
+void GREEN(void) {
+    GPIO_PORTF_DATA_R ^= 0x08;
 }

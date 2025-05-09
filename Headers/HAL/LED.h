@@ -2,6 +2,7 @@
 #define LED_H
 
 void LED_Init(void);
-void LED_ToggleRed(void);
-
+void RED(void);
+void GREEN(void);
+void BLUE(void);
 #endif
