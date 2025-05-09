@@ -1,4 +1,4 @@
-#include "../../Headers/HAL/LCD.h"
+
 #include <stdint.h>
 #include "../../Services/tm4c123gh6pm.h"
 
@@ -8,7 +8,14 @@ static void delayMs(int ms) {
     for (i = 0; i < ms; i++)
         for (j = 0; j < 1000; j++);
 }
-
+void LCD_WriteCommand(uint8_t cmd) {
+    GPIO_PORTA_DATA_R = 0x00;   // RS=0 (command), E=0
+    GPIO_PORTB_DATA_R = cmd;    // Send command
+    GPIO_PORTA_DATA_R |= 0x80;  // Pulse E high (PA7)
+    delayMs(1);                 // ~1ms pulse width
+    GPIO_PORTA_DATA_R &= ~0x80; // E low
+    delayMs(2);                 // Most commands need 2ms to execute
+}
 void LCD_Init(void) {
     SYSCTL_RCGCGPIO_R |= 0x03;  // Enable Ports A and B
     delayMs(10);                // Allow time for clock to stabilize
@@ -34,14 +41,7 @@ void LCD_Init(void) {
     LCD_WriteCommand(0x06);     // Entry mode: increment, no shift
 }
 
-void LCD_WriteCommand(uint8_t cmd) {
-    GPIO_PORTA_DATA_R = 0x00;   // RS=0 (command), E=0
-    GPIO_PORTB_DATA_R = cmd;    // Send command
-    GPIO_PORTA_DATA_R |= 0x80;  // Pulse E high (PA7)
-    delayMs(1);                 // ~1ms pulse width
-    GPIO_PORTA_DATA_R &= ~0x80; // E low
-    delayMs(2);                 // Most commands need 2ms to execute
-}
+
 
 void LCD_WriteData(uint8_t data) {
     GPIO_PORTA_DATA_R = 0x20;   // RS=1 (data), E=0
