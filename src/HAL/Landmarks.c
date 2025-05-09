@@ -3,7 +3,7 @@
 #include "../../Headers/MCAL/EEPROM.h"
 
 const Landmark presetLandmarks[MAX_LANDMARKS]= {
-		 {30.064347490644835, 31.27761282027815, "Kharasana Building"},
+		{30.064347490644835, 31.27761282027815, "Kharasana Building"},
     {30.064623222639995, 31.28040946583904,"Faculty Mosque"},
     {30.064096296685296, 31.280098317778666 ,"Hall A & B "},
 		{30.06408665098429, 31.28063700439362,"Architecture Building"},

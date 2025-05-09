@@ -3,7 +3,7 @@
 #include "tm4c123gh6pm.h"
 #include <stdint.h>
 
-
+void UART0_WaitForTxReady(void);
 void UART0_Init(void);
 void UART0_SendChar(char data);
 void UART0_SendString(char *pt);
@@ -15,7 +15,8 @@ void UART2_SendString(char *pt);
 char UART2_ReceiveChar(void);
 void UART2_ReceiveString(char *command, uint32_t length);
 
-#endif // UART_H
+#endif 
+
 /*
 #ifndef UART_H
 #define UART_H
