@@ -16,118 +16,85 @@
 #include <string.h>
 #include <stdlib.h>
 
-// GPS Variables (extern if they're in GPS.h)
-extern char GPS[100];
-extern char GPS_Data[12][20];
-extern float currentLat, currentLong;
+// Global variables
+double currentDistance;
+char uartBuffer[60];
+char lcdBuffer[20];
+double minDistance = 999999.0;
+const char* nearestLandmark = "Unknown";
 
-int main() 
-{
-		const Landmark* nearest;
-    float minDist;
-    unsigned int i;
-    char* landmarkName;
+int main(void) {
+	int i;
+    // Initialize hardware
+    LCD_Init();
     UART0_Init();  // For PuTTY
     UART2_Init();  // For GPS
-    LCD_Init();
     
-
-
+    // Test GPS read
+    GPS_read();
+    GPS_ParseData();
     
-    while(1) 
-    {
-        //  Getting GPS data
+    UART0_SendString("Navigation System Started\r\n");
+
+    while(1) {
+        // Get GPS data
         GPS_read();
         GPS_ParseData();
+
+        // Reset tracking variables
+        minDistance = 999999.0;
+        nearestLandmark = "Unknown";
         
-        //  Finding nearest landmark
-        nearest = &presetLandmarks[0];
-        minDist = GET_Distance(currentLong, currentLat, 
-                             nearest->longitude, nearest->latitude);
-        
-        for(i = 1; i < MAX_LANDMARKS; i++) 
-        {
-            float dist = GET_Distance(currentLong, currentLat,
-                                    presetLandmarks[i].longitude,
-                                    presetLandmarks[i].latitude);
-            if(dist < minDist) 
-            {
-                minDist = dist;
-                nearest = &presetLandmarks[i];
+        // Check for valid GPS fix
+        if(strcmp(GPS_Data[1], "A") != 0) {
+            LCD_Clear();
+            LCD_String("No GPS Fix");
+            UART0_SendString("Waiting for GPS fix...\r\n");
+            delay(1000);
+            continue;
+        }
+
+        // Find nearest landmark
+        for(i = 0; i < LANDMARK_COUNT; i++) {
+            currentDistance = GET_Distance(
+                currentLat, 
+                currentLong,
+                presetLandmarks[i].latitude, 
+                presetLandmarks[i].longitude);
+            
+            if(currentDistance < minDistance) {
+                minDistance = currentDistance;
+                nearestLandmark = presetLandmarks[i].name;
             }
         }
         
-        // 3. Display nearest landmark name only
-        landmarkName = (char*)nearest->name; 
-        
+        // Display on LCD
+        snprintf(lcdBuffer, sizeof(lcdBuffer), "%-16s", nearestLandmark);
         LCD_Clear();
-        LCD_String(landmarkName);
-				
-				/// for testing in putty 
-        UART0_SendString(landmarkName);
-        UART0_SendString("\r\n");
+        LCD_String(lcdBuffer);
         
-        delay(1000); // Update every second
+        snprintf(lcdBuffer, sizeof(lcdBuffer), "%.0fm", minDistance);
+        LCD_String(lcdBuffer);
+        
+        // Send to UART
+        snprintf(uartBuffer, sizeof(uartBuffer),
+            "Nearest: %s\r\n"
+            "Distance: %.0f meters\r\n"
+            "Position: %.6f, %.6f\r\n",
+            nearestLandmark, 
+            minDistance, 
+            currentLat, 
+            currentLong);
+        UART0_SendString(uartBuffer);
+        
+        delay(300); // Update every 300ms
     }
 }
-//////////////////////  previous approach    //////////////////////////////////////////////////
+
 /*
-#include "../../Services/tm4c123gh6pm.h"
-#include "../../Services/Bit_Utilities.h"
-#include "../../Headers/MCAL/UART.h"
-#include "../../Headers/MCAL/Systick.h"
-#include "../../Headers/MCAL/GPIO.h"
-#include "../../Headers/MCAL/EEPROM.h"
-#include "../../Headers/HAL/GPS.h"
-#include "../../Headers/HAL/Landmarks.h"
-#include "../../Headers/HAL/LCD.h"
-#include "../../Headers/APP/APP.h"
-#include <stdio.h>
-#include <stdint.h>
-#include <math.h>
-
-float minDistance;
-float distance;
-unsigned char firstDistance = 0;
-const Landmark* nearestLandmark;
-int i;
-
 int main() {
-    Systick_Init();
-		initPortA();
-		initPortB();
-		LCD_Init();
-		UART0_Init();
-		UART2_Init();
-		
-    while(1) {
-			GPS_read();
-			GPS_ParseData();
-			// in the beginning default the first location in the landmarks array as the nearest location for comparisons;
-			if(firstDistance == 0){
-				minDistance = GET_Distance(currentLong,currentLat,presetLandmarks[0].longitude,presetLandmarks[0].latitude);
-				nearestLandmark = &presetLandmarks[0];
-				firstDistance = 1;
-			}
-			for(i = 0; i < MAX_LANDMARKS; i++){
-				distance = GET_Distance(currentLong,currentLat,presetLandmarks[i].longitude,presetLandmarks[i].latitude);
-				if(distance < minDistance){
-					minDistance = distance;
-					nearestLandmark = &presetLandmarks[i];
-				}
-			}
-			if(minDistance <= 10.0f){
-				UART0_SendString((char*)nearestLandmark->name); // Name appears only if near location (about 10 meters radius)
-				LCD_Clear();
-				LCD_WriteData(' ');              // Write the leading space
-				LCD_String((char*)nearestLandmark->name);	
-			} 
-			delay(500);	
-    }
-		
-}*/
-////testing gps parse data 
-/*int main() {
+	volatile int i;
+	char buffer[20];
     UART0_Init();  // For PuTTY output
     UART2_Init();  // For GPS (assuming this exists)
     
@@ -149,7 +116,7 @@ int main() {
             
             // You can also use the float variables:
             UART0_SendString("\r\nFloat values: ");
-            char buffer[20];
+            
             sprintf(buffer, "%.6f, %.6f", currentLat, currentLong);
             UART0_SendString(buffer);
             
@@ -160,6 +127,7 @@ int main() {
         }
         
         // Delay (~1 second)
-        for(volatile int i = 0; i < 1000000; i++);
+        delay(1000);
     }
-}*/
+}
+*/

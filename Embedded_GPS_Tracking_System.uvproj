@@ -540,6 +540,16 @@
               <FileType>1</FileType>
               <FilePath>.\src\HAL\LED.c</FilePath>
             </File>
+            <File>
+              <FileName>LCD_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Test\LCD_test.c</FilePath>
+            </File>
+            <File>
+              <FileName>GPS_test.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Test\GPS_test.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

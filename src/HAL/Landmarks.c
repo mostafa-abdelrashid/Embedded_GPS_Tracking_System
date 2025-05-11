@@ -2,11 +2,21 @@
 #include <stdint.h>
 #include "../../Headers/MCAL/EEPROM.h"
 
-const Landmark presetLandmarks[MAX_LANDMARKS]= {
-		{3202.11068,3428.44868, "Home"},
-    {3202.11078, 3428.44883,"Away"}
+const Landmark presetLandmarks[]= {
+   {"Fountain",30.065744,31.278368 },
+	 {"Gate 2",30.064781 ,31.277498 },
+	 {"Credit ", 30.063641 ,31.278437 },
+	 {"LUPAN", 30.063488,31.279522 },
+	 {"Halls C & D",30.063923 , 31.280331},
+	 {"Halls A & B",30.064240 ,31.280308 },
+	 {"Library",30.065121 ,31.279991  },
+	 {"Modarragat",30.064112 ,31.279051 },
+	 
+
 	
 };
+const int LANDMARK_COUNT = sizeof(presetLandmarks)/sizeof(presetLandmarks[0]);
+
 ///////////////////////////PREVIOUS APPROACH THAT IS NOT USED BECAUSE IT WAS EASIER TO SAVE LANDAMRKS IN THE INTRUCTION MEMORY NOT LIKE AN ARRAY //////////////////////////////
 //function to write all preset landmarks to EEPROM
 void Landmarks_EEPROM_WriteAll(void) {

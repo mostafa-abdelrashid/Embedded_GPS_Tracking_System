@@ -4,9 +4,9 @@
 #define PI 3.14159265359
 #define EARTH_RADIUS 637100
 
-float GET_Distance(float Longitude_Start,float Latitude_Start,float Longitude_End,float Latitude_End);
-float ToDegree(float angle);
-float ToRad(float angle);
+double GET_Distance(double lat1, double lon1, double lat2, double lon2);
+double ToRad(double angle);
+double ToDegree(float angle);
 
 
 
