@@ -5,13 +5,15 @@
 #define MAX_LANDMARKS   50
 
 typedef struct {
+		char* name;
     float latitude;
     float longitude;
-    char name[MAX_NAME_LENGTH];
+   
 } Landmark;
 
 // Array of landmarks stored in flash initially
-extern const Landmark presetLandmarks[MAX_LANDMARKS];
+extern const Landmark presetLandmarks[];
+extern const int LANDMARK_COUNT;
 
 // EEPROM functions
 void Landmarks_EEPROM_WriteAll(void);

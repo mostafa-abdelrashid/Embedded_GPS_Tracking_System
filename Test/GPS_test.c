@@ -3,12 +3,13 @@
 #include "tm4c123gh6pm.h"
 #include "../Headers/MCAL/UART.h"
 #include "../Headers/HAL/GPS.h"
+#include "../Headers/HAL/LCD.h"
 
 
 int main() {
     UART0_Init();  // For PuTTY output
     UART2_Init();  // For GPS (assuming this exists)
-    
+		LCD_Init();
     UART0_SendString("GPS Test Started\r\n");
 
     while(1) {
